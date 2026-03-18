@@ -38,6 +38,7 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
   String _jwtFixo = '';
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _jaasMeetingKey = GlobalKey();
 
   @override
   void initState() {
@@ -173,6 +174,7 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                                   height:
                                       MediaQuery.sizeOf(context).height * 1.0,
                                   child: custom_widgets.JaasMeetingView(
+                                    key: _jaasMeetingKey,
                                     width: double.infinity,
                                     height:
                                         MediaQuery.sizeOf(context).height * 1.0,
