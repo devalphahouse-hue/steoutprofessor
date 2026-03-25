@@ -36,6 +36,7 @@ class SalaAulaWidget extends StatefulWidget {
 class _SalaAulaWidgetState extends State<SalaAulaWidget> {
   late SalaAulaModel _model;
   String _jwtFixo = '';
+  int _endSignal = 0;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _jaasMeetingKey = GlobalKey();
@@ -91,8 +92,6 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<FFAppState>();
-
     return StreamBuilder<List<AulasRow>>(
       stream: _model.salaAulaSupabaseStream ??= SupaFlow.client
           .from("Aulas")
@@ -190,7 +189,7 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                                     prejoin: true,
                                     lang: 'ptBR',
                                     enableSpaNavigationListeners: false,
-                                    endSignal: FFAppState().jaasEndSignal,
+                                    endSignal: _endSignal,
                                   ),
                                 ),
                               ],
@@ -1041,10 +1040,9 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                                 child: Builder(
                                   builder: (context) => FFButtonWidget(
                                     onPressed: () async {
-                                      FFAppState().jaasEndSignal =
-                                          getCurrentTimestamp
+                                      _endSignal = getCurrentTimestamp
                                               .millisecondsSinceEpoch;
-                                      FFAppState().update(() {});
+                                      safeSetState(() {});
                                       await showDialog(
                                         context: context,
                                         builder: (dialogContext) {

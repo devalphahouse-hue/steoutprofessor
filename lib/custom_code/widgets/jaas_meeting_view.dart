@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:ui_web' as ui_web;
 // ignore: avoid_web_libraries_in_flutter
@@ -35,7 +36,7 @@ class JaasMeetingView extends StatefulWidget {
     /// Liga/desliga popstate/hashchange (use com filtro se for usar)
     this.enableSpaNavigationListeners = false,
 
-    /// 🔴 SINAL para encerrar a call.
+    /// SINAL para encerrar a call.
     /// Sempre que esse número mudar, encerra a call.
     this.endSignal = 0,
   });
@@ -54,7 +55,6 @@ class JaasMeetingView extends StatefulWidget {
 
   final bool enableSpaNavigationListeners;
 
-  /// 🔴 Recomendado: use um int (timestamp/contador) em vez de bool
   final int endSignal;
 
   @override
@@ -68,13 +68,20 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
 
   // Listeners/subscriptions (Web)
   html.EventListener? _beforeUnloadListener;
-  html.EventListener? _pageHideListener;
+  html.EventListener? _messageListener;
   StreamSubscription<html.PopStateEvent>? _popStateSub;
   StreamSubscription<html.Event>? _hashChangeSub;
 
   // IDs/atributos para limpeza
   late String _iframeDomId;
   late String _roomKey;
+
+  // Reconexão automática
+  bool _disposed = false;
+  bool _intentionalLeave = false;
+  int _reconnectCount = 0;
+  Timer? _reconnectTimer;
+  static const int _maxReconnectAttempts = 5;
 
   @override
   void initState() {
@@ -94,16 +101,17 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
       (int _) => _iframe!,
     );
 
-    // fechar aba / refresh
-    _beforeUnloadListener = (event) => _leaveMeeting();
+    // fechar aba / refresh — mostra confirmação antes de sair
+    _beforeUnloadListener = (event) {
+      (event as html.BeforeUnloadEvent).returnValue =
+          'Você está em uma aula ao vivo. Deseja realmente sair?';
+    };
     html.window.addEventListener('beforeunload', _beforeUnloadListener!);
 
-    // pagehide
-    _pageHideListener = (event) => _leaveMeeting();
-    html.window.addEventListener('pagehide', _pageHideListener!);
+    // Escuta eventos postMessage do iframe JaaS para detectar desconexões
+    _messageListener = (event) => _onJaasMessage(event);
+    html.window.addEventListener('message', _messageListener!);
 
-    // ⚠️ SPA sem filtro pode derrubar "do nada".
-    // Se você ligar isso, recomendo aplicar filtro por rota como fizemos antes.
     if (widget.enableSpaNavigationListeners) {
       _popStateSub = html.window.onPopState.listen((_) => _leaveMeeting());
       _hashChangeSub = html.window.onHashChange.listen((_) => _leaveMeeting());
@@ -113,6 +121,72 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
   void _syncRoomKeys() {
     _roomKey = '${widget.appId}__${widget.roomShort}';
     _iframeDomId = 'jaas_iframe_${_roomKey}';
+  }
+
+  /// Processa mensagens postMessage vindas do iframe JaaS/Jitsi.
+  /// O Jitsi envia eventos como videoConferenceLeft, readyToClose, etc.
+  void _onJaasMessage(html.Event rawEvent) {
+    if (_disposed || _intentionalLeave) return;
+    if (!kIsWeb) return;
+
+    try {
+      final event = rawEvent as html.MessageEvent;
+
+      // Aceitar apenas mensagens da origem 8x8.vc
+      final origin = event.origin;
+      if (origin == null || !origin.contains('8x8.vc')) return;
+
+      // Tentar decodificar os dados da mensagem
+      dynamic data = event.data;
+      if (data is String) {
+        try {
+          data = json.decode(data);
+        } catch (_) {
+          return;
+        }
+      }
+
+      if (data is! Map) return;
+
+      final eventName = data['event'] ?? data['type'] ?? '';
+
+      if (eventName == 'video-conference-left' ||
+          eventName == 'videoConferenceLeft' ||
+          eventName == 'conference-terminated' ||
+          eventName == 'readyToClose') {
+        // Conferência encerrada inesperadamente — tentar reconectar
+        _attemptReconnect();
+      }
+
+      // Resetar contador quando conecta com sucesso
+      if (eventName == 'video-conference-joined' ||
+          eventName == 'videoConferenceJoined') {
+        _reconnectCount = 0;
+      }
+    } catch (_) {}
+  }
+
+  /// Tenta reconectar ao JaaS após desconexão não intencional.
+  /// Usa backoff progressivo: 2s, 4s, 6s, 8s, 10s.
+  /// Máximo de 5 tentativas.
+  void _attemptReconnect() {
+    if (_disposed || _intentionalLeave) return;
+    if (_reconnectCount >= _maxReconnectAttempts) return;
+    if (_iframe == null || widget.jwt.isEmpty) return;
+
+    _reconnectCount++;
+    final delaySec = _reconnectCount * 2;
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(Duration(seconds: delaySec), () {
+      if (_disposed || _intentionalLeave) return;
+      if (_iframe == null) return;
+
+      // Recarrega o iframe com a mesma URL
+      try {
+        _iframe!.src = _buildSrc();
+      } catch (_) {}
+    });
   }
 
   @override
@@ -138,6 +212,7 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
       _syncRoomKeys();
       _cleanupOrphanIframesForThisRoom(skip: _iframe);
       _iframeLoaded = false;
+      _reconnectCount = 0;
 
       if (_iframe != null) {
         _iframe!
@@ -188,6 +263,9 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
 
   void _leaveMeeting() {
     if (!kIsWeb) return;
+
+    _intentionalLeave = true;
+    _reconnectTimer?.cancel();
 
     try {
       _cleanupOrphanIframesForThisRoom(skip: null);
@@ -256,12 +334,15 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
 
   @override
   void dispose() {
+    _disposed = true;
+    _reconnectTimer?.cancel();
+
     if (kIsWeb) {
       if (_beforeUnloadListener != null) {
         html.window.removeEventListener('beforeunload', _beforeUnloadListener!);
       }
-      if (_pageHideListener != null) {
-        html.window.removeEventListener('pagehide', _pageHideListener!);
+      if (_messageListener != null) {
+        html.window.removeEventListener('message', _messageListener!);
       }
 
       _popStateSub?.cancel();
