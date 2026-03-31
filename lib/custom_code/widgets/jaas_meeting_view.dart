@@ -39,6 +39,7 @@ class JaasMeetingView extends StatefulWidget {
     /// SINAL para encerrar a call.
     /// Sempre que esse número mudar, encerra a call.
     this.endSignal = 0,
+    this.onJwtRefreshNeeded,
   });
 
   final double width;
@@ -56,6 +57,7 @@ class JaasMeetingView extends StatefulWidget {
   final bool enableSpaNavigationListeners;
 
   final int endSignal;
+  final VoidCallback? onJwtRefreshNeeded;
 
   @override
   State<JaasMeetingView> createState() => _JaasMeetingViewState();
@@ -82,6 +84,12 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
   int _reconnectCount = 0;
   Timer? _reconnectTimer;
   static const int _maxReconnectAttempts = 5;
+
+  // Renovação automática do JWT antes de expirar
+  Timer? _jwtRefreshTimer;
+
+  // Listener de visibilidade da aba
+  html.EventListener? _visibilityListener;
 
   @override
   void initState() {
@@ -112,6 +120,16 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
     _messageListener = (event) => _onJaasMessage(event);
     html.window.addEventListener('message', _messageListener!);
 
+    // Detecta quando a aba volta ao foreground para resetar reconexão
+    _visibilityListener = (_) {
+      if (_disposed || _intentionalLeave) return;
+      if (html.document.visibilityState == 'visible') {
+        // Aba voltou ao foreground — resetar contador de reconexão
+        _reconnectCount = 0;
+      }
+    };
+    html.document.addEventListener('visibilitychange', _visibilityListener!);
+
     if (widget.enableSpaNavigationListeners) {
       _popStateSub = html.window.onPopState.listen((_) => _leaveMeeting());
       _hashChangeSub = html.window.onHashChange.listen((_) => _leaveMeeting());
@@ -121,6 +139,55 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
   void _syncRoomKeys() {
     _roomKey = '${widget.appId}__${widget.roomShort}';
     _iframeDomId = 'jaas_iframe_${_roomKey}';
+  }
+
+  /// Decodifica o payload do JWT para extrair o timestamp de expiração (campo `exp`).
+  int? _getJwtExp(String jwt) {
+    try {
+      final parts = jwt.split('.');
+      if (parts.length != 3) return null;
+      String payload = parts[1];
+      // Adiciona padding base64 se necessário
+      switch (payload.length % 4) {
+        case 2:
+          payload += '==';
+          break;
+        case 3:
+          payload += '=';
+          break;
+      }
+      final decoded = utf8.decode(base64Url.decode(payload));
+      final map = json.decode(decoded) as Map<String, dynamic>;
+      return map['exp'] as int?;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Agenda a renovação do JWT 30 minutos antes de expirar.
+  /// Quando o timer dispara, chama o callback [onJwtRefreshNeeded] do widget pai.
+  void _scheduleJwtRefresh(String jwt) {
+    _jwtRefreshTimer?.cancel();
+    if (jwt.isEmpty) return;
+
+    final exp = _getJwtExp(jwt);
+    if (exp == null) return;
+
+    final expiresAt = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+    final refreshAt = expiresAt.subtract(const Duration(minutes: 30));
+    final now = DateTime.now();
+
+    if (refreshAt.isBefore(now)) {
+      // Já passou do ponto de refresh — solicitar imediatamente
+      widget.onJwtRefreshNeeded?.call();
+      return;
+    }
+
+    final delay = refreshAt.difference(now);
+    _jwtRefreshTimer = Timer(delay, () {
+      if (_disposed) return;
+      widget.onJwtRefreshNeeded?.call();
+    });
   }
 
   /// Processa mensagens postMessage vindas do iframe JaaS/Jitsi.
@@ -225,6 +292,23 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
       _iframe!.src = _buildSrc();
       _iframeLoaded = true;
     }
+
+    // JWT foi renovado com um token diferente (refresh antes de expirar)
+    final jwtRefreshed = _iframeLoaded &&
+        widget.jwt.isNotEmpty &&
+        oldWidget.jwt.isNotEmpty &&
+        oldWidget.jwt != widget.jwt;
+
+    if (jwtRefreshed && _iframe != null) {
+      // Recarrega o iframe com o novo JWT para evitar expiração
+      _iframe!.src = _buildSrc();
+      _reconnectCount = 0;
+    }
+
+    // Agenda refresh do novo JWT (tanto na primeira carga quanto no refresh)
+    if ((jwtBecameAvailable || jwtRefreshed) && widget.jwt.isNotEmpty) {
+      _scheduleJwtRefresh(widget.jwt);
+    }
   }
 
   void _cleanupOrphanIframesForThisRoom({html.IFrameElement? skip}) {
@@ -321,6 +405,8 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
       'config.startWithAudioMuted': widget.audioMuted ? 'true' : 'false',
       'config.startWithVideoMuted': widget.videoMuted ? 'true' : 'false',
       'config.defaultLanguage': widget.lang,
+      'config.toolbarConfig.alwaysVisible': 'true',
+      'config.toolbarConfig.autoHideTimeout': '0',
       if (widget.displayName.isNotEmpty)
         'userInfo.displayName': widget.displayName,
       if (widget.email.isNotEmpty) 'userInfo.email': widget.email,
@@ -336,6 +422,7 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
   void dispose() {
     _disposed = true;
     _reconnectTimer?.cancel();
+    _jwtRefreshTimer?.cancel();
 
     if (kIsWeb) {
       if (_beforeUnloadListener != null) {
@@ -347,6 +434,10 @@ class _JaasMeetingViewState extends State<JaasMeetingView> {
 
       _popStateSub?.cancel();
       _hashChangeSub?.cancel();
+
+      if (_visibilityListener != null) {
+        html.document.removeEventListener('visibilitychange', _visibilityListener!);
+      }
 
       _leaveMeeting();
     }

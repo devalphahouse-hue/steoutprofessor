@@ -92,112 +92,123 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<AulasRow>>(
-      stream: _model.salaAulaSupabaseStream ??= SupaFlow.client
-          .from("Aulas")
-          .stream(primaryKey: ['id'])
-          .eqOrNull(
-            'id',
-            widget!.aulaId,
-          )
-          .map((list) => list.map((item) => AulasRow(item)).toList()),
-      builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
-        if (!snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-            body: Center(
-              child: SizedBox(
-                width: 50.0,
-                height: 50.0,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    FlutterFlowTheme.of(context).primary,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
-        List<AulasRow> salaAulaAulasRowList = snapshot.data!;
-
-        final salaAulaAulasRow =
-            salaAulaAulasRowList.isNotEmpty ? salaAulaAulasRowList.first : null;
-
-        // Inicializa o controller do mural com o valor existente do banco
-        // (apenas na primeira vez, para não sobrescrever o que o professor está digitando)
-        if (_model.textController2 != null &&
-            _model.textController2!.text.isEmpty &&
-            (salaAulaAulasRow?.muralAula ?? '').isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_model.textController2 != null &&
-                _model.textController2!.text.isEmpty) {
-              _model.textController2!.text = salaAulaAulasRow!.muralAula!;
-            }
-          });
-        }
-
-        return GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: Scaffold(
-            key: scaffoldKey,
-            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-            body: SafeArea(
-              top: true,
-              child: Column(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        body: SafeArea(
+          top: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Row(
                 mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      wrapWithModel(
-                        model: _model.sidebarSlimModel,
-                        updateCallback: () => safeSetState(() {}),
-                        child: SidebarSlimWidget(),
+                  wrapWithModel(
+                    model: _model.sidebarSlimModel,
+                    updateCallback: () => safeSetState(() {}),
+                    child: SidebarSlimWidget(),
+                  ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height:
+                          MediaQuery.sizeOf(context).height * 1.0,
+                      child: custom_widgets.JaasMeetingView(
+                        key: _jaasMeetingKey,
+                        width: double.infinity,
+                        height:
+                            MediaQuery.sizeOf(context).height * 1.0,
+                        appId:
+                            'vpaas-magic-cookie-621aa69dceea45c4b411c688b616a9bb',
+                        roomShort: widget!.aulaId!,
+                        jwt: _jwtFixo,
+                        displayName:
+                            _model.userlog!.firstOrNull!.nome!,
+                        email: currentUserEmail,
+                        audioMuted: false,
+                        videoMuted: false,
+                        prejoin: true,
+                        lang: 'ptBR',
+                        enableSpaNavigationListeners: false,
+                        endSignal: _endSignal,
+                        onJwtRefreshNeeded: () async {
+                          final result = await SalaJitsiCall.call(
+                            sala: widget!.aulaId,
+                            role: _model.userlog?.firstOrNull?.role,
+                            token: currentJwtToken,
+                          );
+                          if (result.succeeded) {
+                            final newJwt = SalaJitsiCall.tokenjwt(
+                              result.jsonBody ?? '',
+                            );
+                            if (newJwt != null && newJwt.isNotEmpty) {
+                              _jwtFixo = newJwt;
+                              FFAppState().jaasJWT = _jwtFixo;
+                              safeSetState(() {});
+                            }
+                          }
+                        },
                       ),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(),
-                          child: SingleChildScrollView(
-                            primary: false,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 1.0,
-                                  child: custom_widgets.JaasMeetingView(
-                                    key: _jaasMeetingKey,
-                                    width: double.infinity,
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 1.0,
-                                    appId:
-                                        'vpaas-magic-cookie-621aa69dceea45c4b411c688b616a9bb',
-                                    roomShort: widget!.aulaId!,
-                                    jwt: _jwtFixo,
-                                    displayName:
-                                        _model.userlog!.firstOrNull!.nome!,
-                                    email: currentUserEmail,
-                                    audioMuted: false,
-                                    videoMuted: false,
-                                    prejoin: true,
-                                    lang: 'ptBR',
-                                    enableSpaNavigationListeners: false,
-                                    endSignal: _endSignal,
-                                  ),
+                    ),
+                  ),
+                  // Sidebar direita isolada em seu próprio StreamBuilder
+                  // para que rebuilds do stream NÃO afetem o iframe da videochamada
+                  StreamBuilder<List<AulasRow>>(
+                    stream: _model.salaAulaSupabaseStream ??= SupaFlow.client
+                        .from("Aulas")
+                        .stream(primaryKey: ['id'])
+                        .eqOrNull(
+                          'id',
+                          widget!.aulaId,
+                        )
+                        .map((list) => list.map((item) => AulasRow(item)).toList()),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Container(
+                          width: 250.0,
+                          height: MediaQuery.sizeOf(context).height * 1.0,
+                          decoration: BoxDecoration(
+                            color:
+                                FlutterFlowTheme.of(context).secondaryBackground,
+                          ),
+                          child: Center(
+                            child: SizedBox(
+                              width: 50.0,
+                              height: 50.0,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  FlutterFlowTheme.of(context).primary,
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      Container(
+                        );
+                      }
+                      List<AulasRow> salaAulaAulasRowList = snapshot.data!;
+
+                      final salaAulaAulasRow =
+                          salaAulaAulasRowList.isNotEmpty ? salaAulaAulasRowList.first : null;
+
+                      // Inicializa o controller do mural com o valor existente do banco
+                      // (apenas na primeira vez, para não sobrescrever o que o professor está digitando)
+                      if (_model.textController2 != null &&
+                          _model.textController2!.text.isEmpty &&
+                          (salaAulaAulasRow?.muralAula ?? '').isNotEmpty) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_model.textController2 != null &&
+                              _model.textController2!.text.isEmpty) {
+                            _model.textController2!.text = salaAulaAulasRow!.muralAula!;
+                          }
+                        });
+                      }
+
+                      return Container(
                         width: 250.0,
                         height: MediaQuery.sizeOf(context).height * 1.0,
                         decoration: BoxDecoration(
@@ -1127,15 +1138,15 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                             ].divide(SizedBox(height: 12.0)),
                           ),
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
