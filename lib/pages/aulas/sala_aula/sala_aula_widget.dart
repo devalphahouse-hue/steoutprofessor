@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'dart:async';
@@ -119,41 +120,52 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                       width: double.infinity,
                       height:
                           MediaQuery.sizeOf(context).height * 1.0,
-                      child: custom_widgets.JaasMeetingView(
-                        key: _jaasMeetingKey,
-                        width: double.infinity,
-                        height:
-                            MediaQuery.sizeOf(context).height * 1.0,
-                        appId:
-                            'vpaas-magic-cookie-621aa69dceea45c4b411c688b616a9bb',
-                        roomShort: widget!.aulaId!,
-                        jwt: _jwtFixo,
-                        displayName:
-                            _model.userlog!.firstOrNull!.nome!,
-                        email: currentUserEmail,
-                        audioMuted: false,
-                        videoMuted: false,
-                        prejoin: true,
-                        lang: 'ptBR',
-                        enableSpaNavigationListeners: false,
-                        endSignal: _endSignal,
-                        onJwtRefreshNeeded: () async {
-                          final result = await SalaJitsiCall.call(
-                            sala: widget!.aulaId,
-                            role: _model.userlog?.firstOrNull?.role,
-                            token: currentJwtToken,
-                          );
-                          if (result.succeeded) {
-                            final newJwt = SalaJitsiCall.tokenjwt(
-                              result.jsonBody ?? '',
-                            );
-                            if (newJwt != null && newJwt.isNotEmpty) {
-                              _jwtFixo = newJwt;
-                              FFAppState().jaasJWT = _jwtFixo;
-                              safeSetState(() {});
-                            }
-                          }
-                        },
+                      child: Stack(
+                        children: [
+                          custom_widgets.JaasMeetingView(
+                            key: _jaasMeetingKey,
+                            width: double.infinity,
+                            height:
+                                MediaQuery.sizeOf(context).height * 1.0,
+                            appId:
+                                'vpaas-magic-cookie-621aa69dceea45c4b411c688b616a9bb',
+                            roomShort: widget!.aulaId!,
+                            jwt: _jwtFixo,
+                            displayName:
+                                _model.userlog!.firstOrNull!.nome!,
+                            email: currentUserEmail,
+                            audioMuted: false,
+                            videoMuted: false,
+                            prejoin: true,
+                            lang: 'ptBR',
+                            enableSpaNavigationListeners: false,
+                            endSignal: _endSignal,
+                            onJwtRefreshNeeded: () async {
+                              final result = await SalaJitsiCall.call(
+                                sala: widget!.aulaId,
+                                role: _model.userlog?.firstOrNull?.role,
+                                token: currentJwtToken,
+                              );
+                              if (result.succeeded) {
+                                final newJwt = SalaJitsiCall.tokenjwt(
+                                  result.jsonBody ?? '',
+                                );
+                                if (newJwt != null && newJwt.isNotEmpty) {
+                                  _jwtFixo = newJwt;
+                                  FFAppState().jaasJWT = _jwtFixo;
+                                  safeSetState(() {});
+                                }
+                              }
+                            },
+                          ),
+                          Positioned(
+                            top: 8.0,
+                            right: 8.0,
+                            child: PointerInterceptor(
+                              child: custom_widgets.NetworkStatusIndicator(),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
