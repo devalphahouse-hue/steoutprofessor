@@ -128,13 +128,10 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         body: SafeArea(
           top: true,
-          child: Column(
+          child: Row(
             mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
                   wrapWithModel(
                     model: _model.sidebarSlimModel,
                     updateCallback: () => safeSetState(() {}),
@@ -1212,8 +1209,6 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                   ),
                 ],
               ),
-            ],
-          ),
         ),
       ),
     );
