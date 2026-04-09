@@ -585,14 +585,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                                                         currentUserUid,
                                                       ),
                                                     );
-                                                    if (_model.userlogado
-                                                            ?.length !=
+                                                    if ((_model.userlogado?.length ?? 0) !=
                                                         0) {
                                                       FFAppState().idfranquia =
                                                           _model
-                                                              .userlogado!
-                                                              .firstOrNull!
-                                                              .franquia!;
+                                                              .userlogado
+                                                              ?.firstOrNull
+                                                              ?.franquia ?? '';
                                                       safeSetState(() {});
                                                       _model.fraquiaativa =
                                                           await FranquiasTable()

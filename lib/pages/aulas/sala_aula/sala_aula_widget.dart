@@ -235,6 +235,12 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                         )
                         .map((list) => list.map((item) => AulasRow(item)).toList()),
                     builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Erro ao carregar dados.',
+                              style: FlutterFlowTheme.of(context).bodyMedium),
+                        );
+                      }
                       if (!snapshot.hasData) {
                         return Container(
                           width: 250.0,
@@ -497,6 +503,12 @@ class _SalaAulaWidgetState extends State<SalaAulaWidget> {
                                         }),
                                         builder: (context, snapshot) {
                                           // Customize what your widget looks like when it's loading.
+                                          if (snapshot.hasError) {
+                                            return Center(
+                                              child: Text('Erro ao carregar dados.',
+                                                  style: FlutterFlowTheme.of(context).bodyMedium),
+                                            );
+                                          }
                                           if (!snapshot.hasData) {
                                             return Center(
                                               child: SizedBox(
