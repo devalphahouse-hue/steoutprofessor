@@ -447,6 +447,16 @@ class FFRoute {
             if (currentSession != null && !currentSession.isExpired) {
               return null;
             }
+
+            // Protege a SalaAula contra redirect durante flutuações temporárias
+            // de auth. Destruir a videochamada por um glitch de auth é inaceitável.
+            final currentPath = state.uri.toString();
+            if (currentPath.startsWith('/salaAula') &&
+                appStateNotifier.initiallyLoggedIn) {
+              SupaFlow.client.auth.refreshSession().ignore();
+              return null;
+            }
+
             appStateNotifier.setRedirectLocationIfUnset(state.uri.toString());
             return '/login';
           }

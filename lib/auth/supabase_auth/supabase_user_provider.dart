@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:rxdart/rxdart.dart';
 
 import '/backend/supabase/supabase.dart';
@@ -46,19 +48,26 @@ class StepoutProfessorSupabaseUser extends BaseAuthUser {
 
   @override
   bool get emailVerified {
-    // Reloads the user when checking in order to get the most up to date
-    // email verified status.
-    if (loggedIn && user!.emailConfirmedAt == null) {
-      refreshUser();
-    }
     return user?.emailConfirmedAt != null;
   }
 
+  static Completer<void>? _refreshCompleter;
+
   @override
   Future refreshUser() async {
-    await SupaFlow.client.auth
-        .refreshSession()
-        .then((_) => user = SupaFlow.client.auth.currentUser);
+    if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+      await _refreshCompleter!.future;
+      user = SupaFlow.client.auth.currentUser;
+      return;
+    }
+
+    _refreshCompleter = Completer<void>();
+    try {
+      await SupaFlow.client.auth.refreshSession();
+      user = SupaFlow.client.auth.currentUser;
+    } finally {
+      _refreshCompleter!.complete();
+    }
   }
 }
 
