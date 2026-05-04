@@ -1,18 +1,13 @@
 import '/auth/supabase_auth/auth_util.dart';
-import '/backend/schema/structs/index.dart';
 import '/backend/supabase/supabase.dart';
 import '/componentes/sidebar/sidebar_widget.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/custom_code/actions/detect_browser.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'calendario_aulas_lista_model.dart';
 export 'calendario_aulas_lista_model.dart';
 
@@ -30,38 +25,33 @@ class CalendarioAulasListaWidget extends StatefulWidget {
 class _CalendarioAulasListaWidgetState
     extends State<CalendarioAulasListaWidget> {
   late CalendarioAulasListaModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => CalendarioAulasListaModel());
-
-    // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      FFAppState().dataParamentroCalendario = getCurrentTimestamp;
-      safeSetState(() {});
-      FFAppState().ListaDiasCalendarioAulas = functions
-          .gerarLista7Dias(getCurrentTimestamp)!
-          .toList()
-          .cast<DiaCalendarioAulasStruct>();
-      safeSetState(() {});
-    });
-
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
   void dispose() {
     _model.dispose();
-
     super.dispose();
+  }
+
+  double _hPad(double width) {
+    if (width < kBreakpointSmall) return 16.0;
+    if (width < kBreakpointLarge) return 24.0;
+    return 48.0;
   }
 
   @override
   Widget build(BuildContext context) {
-    context.watch<FFAppState>();
+    final theme = FlutterFlowTheme.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final isCompact = width < kBreakpointMedium;
+    final hPad = _hPad(width);
 
     return GestureDetector(
       onTap: () {
@@ -70,7 +60,7 @@ class _CalendarioAulasListaWidgetState
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: theme.secondaryBackground,
         body: SafeArea(
           top: true,
           child: Row(
@@ -80,685 +70,22 @@ class _CalendarioAulasListaWidgetState
               wrapWithModel(
                 model: _model.sidebarModel,
                 updateCallback: () => safeSetState(() {}),
-                child: SidebarWidget(
-                  route: 'Aulas',
-                ),
+                child: SidebarWidget(route: 'Aulas'),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   primary: false,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(valueOrDefault<double>(
-                          MediaQuery.sizeOf(context).width < kBreakpointSmall
-                              ? 16.0
-                              : 48.0,
-                          0.0,
-                        )),
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          constraints: BoxConstraints(
-                            maxWidth: 1440.0,
-                          ),
-                          decoration: BoxDecoration(),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Calendário de Aulas',
-                                style: FlutterFlowTheme.of(context)
-                                    .headlineSmall
-                                    .override(
-                                      font: GoogleFonts.interTight(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .fontStyle,
-                                      ),
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .headlineSmall
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .headlineSmall
-                                          .fontStyle,
-                                    ),
-                              ),
-                              Text(
-                                'Acompanhe as próximas aulas programadas',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                              ),
-                              Material(
-                                color: Colors.transparent,
-                                elevation: 2.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        blurRadius: 4.0,
-                                        color: Color(0x33000000),
-                                        offset: Offset(
-                                          0.0,
-                                          2.0,
-                                        ),
-                                      )
-                                    ],
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  alignment: AlignmentDirectional(-1.0, -1.0),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(12.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        FutureBuilder<List<AulasRow>>(
-                                          future: AulasTable().queryRows(
-                                            queryFn: (q) => q
-                                                .eqOrNull(
-                                                  'professor_responsavel',
-                                                  currentUserUid,
-                                                )
-                                                .gteOrNull(
-                                                  'datetimeinicio_aula',
-                                                  supaSerialize<DateTime>(
-                                                      getCurrentTimestamp),
-                                                )
-                                                .order('datetimeinicio_aula',
-                                                    ascending: true),
-                                          ),
-                                          builder: (context, snapshot) {
-                                            // Customize what your widget looks like when it's loading.
-                                            if (snapshot.hasError) {
-                                              return Center(
-                                                child: Text('Erro ao carregar dados.',
-                                                    style: FlutterFlowTheme.of(context).bodyMedium),
-                                              );
-                                            }
-                                            if (!snapshot.hasData) {
-                                              return Center(
-                                                child: SizedBox(
-                                                  width: 50.0,
-                                                  height: 50.0,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                            Color>(
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primary,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                            List<AulasRow>
-                                                listViewAulasRowList =
-                                                snapshot.data!;
-
-                                            return ListView.separated(
-                                              padding: EdgeInsets.zero,
-                                              shrinkWrap: true,
-                                              scrollDirection: Axis.vertical,
-                                              itemCount:
-                                                  listViewAulasRowList.length,
-                                              separatorBuilder: (_, __) =>
-                                                  SizedBox(height: 12.0),
-                                              itemBuilder:
-                                                  (context, listViewIndex) {
-                                                final listViewAulasRow =
-                                                    listViewAulasRowList[
-                                                        listViewIndex];
-                                                return Material(
-                                                  color: Colors.transparent,
-                                                  elevation: 2.0,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12.0),
-                                                  ),
-                                                  child: Container(
-                                                    width: 100.0,
-                                                    decoration: BoxDecoration(
-                                                      color: FlutterFlowTheme
-                                                              .of(context)
-                                                          .secondaryBackground,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12.0),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.all(12.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Text(
-                                                                dateTimeFormat(
-                                                                  "d/M H:mm",
-                                                                  listViewAulasRow
-                                                                      .datetimeinicioAula!,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .titleMedium
-                                                                    .override(
-                                                                      font: GoogleFonts
-                                                                          .interTight(
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .titleMedium
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .titleMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .titleMedium
-                                                                          .fontWeight,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .titleMedium
-                                                                          .fontStyle,
-                                                                    ),
-                                                              ),
-                                                              FutureBuilder<
-                                                                  List<
-                                                                      TurmasRow>>(
-                                                                future: TurmasTable()
-                                                                    .querySingleRow(
-                                                                  queryFn: (q) =>
-                                                                      q.eqOrNull(
-                                                                    'id',
-                                                                    listViewAulasRow
-                                                                        .turma,
-                                                                  ),
-                                                                ),
-                                                                builder: (context,
-                                                                    snapshot) {
-                                                                  // Customize what your widget looks like when it's loading.
-                                                                  if (!snapshot
-                                                                      .hasData) {
-                                                                    return Center(
-                                                                      child:
-                                                                          SizedBox(
-                                                                        width:
-                                                                            50.0,
-                                                                        height:
-                                                                            50.0,
-                                                                        child:
-                                                                            CircularProgressIndicator(
-                                                                          valueColor:
-                                                                              AlwaysStoppedAnimation<Color>(
-                                                                            FlutterFlowTheme.of(context).primary,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  }
-                                                                  List<TurmasRow>
-                                                                      textTurmasRowList =
-                                                                      snapshot
-                                                                          .data!;
-
-                                                                  final textTurmasRow = textTurmasRowList
-                                                                          .isNotEmpty
-                                                                      ? textTurmasRowList
-                                                                          .first
-                                                                      : null;
-
-                                                                  return Text(
-                                                                    valueOrDefault<
-                                                                        String>(
-                                                                      textTurmasRow
-                                                                          ?.nomeDaTurma,
-                                                                      'nomeTurma',
-                                                                    ),
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.inter(
-                                                                            fontWeight:
-                                                                                FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                          ),
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                  );
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                valueOrDefault<
-                                                                    String>(
-                                                                  listViewAulasRow
-                                                                      .statusAula,
-                                                                  'statusAula',
-                                                                ),
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      font: GoogleFonts
-                                                                          .inter(
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontWeight,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontStyle,
-                                                                    ),
-                                                              ),
-                                                              Text(
-                                                                '${dateTimeFormat(
-                                                                  "Hm",
-                                                                  listViewAulasRow
-                                                                      .datetimeinicioAula,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )} - ${dateTimeFormat(
-                                                                  "Hm",
-                                                                  listViewAulasRow
-                                                                      .datetimeTerminoaula,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )}',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      font: GoogleFonts
-                                                                          .inter(
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontWeight,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontStyle,
-                                                                    ),
-                                                              ),
-                                                            ].divide(SizedBox(
-                                                                height: 5.0)),
-                                                          ),
-                                                          Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              InkWell(
-                                                                splashColor: Colors
-                                                                    .transparent,
-                                                                focusColor: Colors
-                                                                    .transparent,
-                                                                hoverColor: Colors
-                                                                    .transparent,
-                                                                highlightColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                onTap:
-                                                                    () async {
-                                                                  context
-                                                                      .pushNamed(
-                                                                    DetalhesAulaWidget
-                                                                        .routeName,
-                                                                    queryParameters:
-                                                                        {
-                                                                      'idAula':
-                                                                          serializeParam(
-                                                                        listViewAulasRow
-                                                                            .id,
-                                                                        ParamType
-                                                                            .String,
-                                                                      ),
-                                                                    }.withoutNulls,
-                                                                  );
-                                                                },
-                                                                child: Text(
-                                                                  '+ ver mais',
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        font: GoogleFonts
-                                                                            .inter(
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .fontStyle,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                              if ((getCurrentTimestamp
-                                                                          .secondsSinceEpoch >=
-                                                                      functions
-                                                                          .inicioMenos5Min(listViewAulasRow
-                                                                              .datetimeinicioAula)!
-                                                                          .secondsSinceEpoch) &&
-                                                                  (getCurrentTimestamp
-                                                                          .secondsSinceEpoch <=
-                                                                      listViewAulasRow
-                                                                          .datetimeTerminoaula!
-                                                                          .secondsSinceEpoch))
-                                                                FFButtonWidget(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    final confirmou =
-                                                                        await showDialog<bool>(
-                                                                      context:
-                                                                          context,
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      builder:
-                                                                          (dialogContext) {
-                                                                        final browserName = detectBrowser();
-                                                                        final isChrome = browserName == 'chrome';
-                                                                        bool aceitou = false;
-                                                                        return StatefulBuilder(
-                                                                          builder: (stfContext, setDialogState) {
-                                                                            return AlertDialog(
-                                                                              shape: RoundedRectangleBorder(
-                                                                                borderRadius: BorderRadius.circular(16.0),
-                                                                              ),
-                                                                              title: Text(
-                                                                                'Antes de entrar na aula',
-                                                                                style: FlutterFlowTheme.of(context).headlineSmall.override(
-                                                                                      font: GoogleFonts.interTight(
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                      ),
-                                                                                      letterSpacing: 0.0,
-                                                                                    ),
-                                                                              ),
-                                                                              content: SingleChildScrollView(
-                                                                                child: Column(
-                                                                                  mainAxisSize: MainAxisSize.min,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    if (!isChrome) ...[
-                                                                                      Container(
-                                                                                        width: double.infinity,
-                                                                                        padding: EdgeInsets.all(12.0),
-                                                                                        decoration: BoxDecoration(
-                                                                                          color: Color(0xFFFEE2E2),
-                                                                                          borderRadius: BorderRadius.circular(8.0),
-                                                                                          border: Border.all(color: Color(0xFFFCA5A5)),
-                                                                                        ),
-                                                                                        child: Row(
-                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                          children: [
-                                                                                            Icon(Icons.warning_amber_rounded, color: Color(0xFFDC2626), size: 22),
-                                                                                            SizedBox(width: 8.0),
-                                                                                            Expanded(
-                                                                                              child: Text(
-                                                                                                'Voce esta usando ${browserDisplayName(browserName)}. Recomendamos fortemente o Google Chrome para evitar problemas de audio e video durante a aula.',
-                                                                                                style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                                      font: GoogleFonts.inter(fontWeight: FontWeight.w500),
-                                                                                                      color: Color(0xFFDC2626),
-                                                                                                      letterSpacing: 0.0,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                      SizedBox(height: 16.0),
-                                                                                    ],
-                                                                                    Text(
-                                                                                      'Para garantir a melhor experiencia na aula ao vivo, siga estas dicas:',
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                            font: GoogleFonts.inter(
-                                                                                              fontWeight: FontWeight.normal,
-                                                                                            ),
-                                                                                            letterSpacing: 0.0,
-                                                                                          ),
-                                                                                    ),
-                                                                                    SizedBox(height: 16.0),
-                                                                                    _buildDicaItem(context, '1.', 'Use o Google Chrome — e o navegador mais compativel com a videochamada. Edge, Safari e Firefox podem causar problemas de audio e travamentos'),
-                                                                                    _buildDicaItem(context, '2.', 'Verifique sua internet — abra outro site para confirmar. Conexoes instaveis causam travamento de video e quedas de audio'),
-                                                                                    _buildDicaItem(context, '3.', 'Prefira cabo ou Wi-Fi forte — dados moveis (4G/5G) podem ser instaveis. Se estiver no Wi-Fi, fique proximo ao roteador'),
-                                                                                    _buildDicaItem(context, '4.', 'Feche outros programas e abas — cada aba aberta consome memoria e banda. Feche tudo que nao for essencial'),
-                                                                                    _buildDicaItem(context, '5.', 'Evite computador sobrecarregado — se seu PC estiver lento, reinicie-o antes da aula'),
-                                                                                    _buildDicaItem(context, '6.', 'Teste camera e microfone antes — ao entrar na aula, voce vera uma tela para selecionar e testar seus dispositivos'),
-                                                                                    SizedBox(height: 12.0),
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        SizedBox(
-                                                                                          width: 24,
-                                                                                          height: 24,
-                                                                                          child: Checkbox(
-                                                                                            value: aceitou,
-                                                                                            activeColor: FlutterFlowTheme.of(context).primary,
-                                                                                            onChanged: (v) => setDialogState(() => aceitou = v ?? false),
-                                                                                          ),
-                                                                                        ),
-                                                                                        SizedBox(width: 8.0),
-                                                                                        Expanded(
-                                                                                          child: Text(
-                                                                                            'Li e entendi as recomendacoes',
-                                                                                            style: FlutterFlowTheme.of(context).bodySmall.override(
-                                                                                                  font: GoogleFonts.inter(fontWeight: FontWeight.w500),
-                                                                                                  letterSpacing: 0.0,
-                                                                                                ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              actions: [
-                                                                                FFButtonWidget(
-                                                                                  onPressed: aceitou ? () => Navigator.of(dialogContext).pop(true) : null,
-                                                                                  text: 'Confirmar e entrar',
-                                                                                  options: FFButtonOptions(
-                                                                                    height: 44.0,
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                                                                                    color: aceitou ? FlutterFlowTheme.of(context).primary : Color(0xFFCCCCCC),
-                                                                                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                          font: GoogleFonts.interTight(
-                                                                                            fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                          ),
-                                                                                          color: Colors.white,
-                                                                                          letterSpacing: 0.0,
-                                                                                        ),
-                                                                                    elevation: 0.0,
-                                                                                    borderRadius: BorderRadius.circular(20.0),
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            );
-                                                                          },
-                                                                        );
-                                                                      },
-                                                                    );
-                                                                    if (confirmou !=
-                                                                        true) {
-                                                                      return;
-                                                                    }
-
-                                                                    FFAppState()
-                                                                        .jaasJWT = '';
-                                                                    safeSetState(
-                                                                        () {});
-
-                                                                    context
-                                                                        .pushNamed(
-                                                                      SalaAulaWidget
-                                                                          .routeName,
-                                                                      queryParameters:
-                                                                          {
-                                                                        'aulaId':
-                                                                            serializeParam(
-                                                                          listViewAulasRow
-                                                                              .id,
-                                                                          ParamType
-                                                                              .String,
-                                                                        ),
-                                                                      }.withoutNulls,
-                                                                    );
-                                                                  },
-                                                                  text:
-                                                                      'Entrar na aula',
-                                                                  options:
-                                                                      FFButtonOptions(
-                                                                    height:
-                                                                        40.0,
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            32.0,
-                                                                            0.0,
-                                                                            32.0,
-                                                                            0.0),
-                                                                    iconPadding:
-                                                                        EdgeInsetsDirectional.fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primary,
-                                                                    textStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.interTight(
-                                                                            fontWeight:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                          ),
-                                                                          color:
-                                                                              Colors.white,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .fontStyle,
-                                                                        ),
-                                                                    elevation:
-                                                                        0.0,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            20.0),
-                                                                  ),
-                                                                ),
-                                                            ].divide(SizedBox(
-                                                                width: 20.0)),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ].divide(SizedBox(height: 16.0)),
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(hPad, 24.0, hPad, 24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Header(theme: theme, isCompact: isCompact),
+                        const SizedBox(height: 24.0),
+                        _AulasCard(theme: theme, isCompact: isCompact),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -768,32 +95,1018 @@ class _CalendarioAulasListaWidgetState
       ),
     );
   }
+}
 
-  Widget _buildDicaItem(BuildContext context, String numero, String texto) {
-    return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+// ---------------------------------------------------------------------------
+// Header
+// ---------------------------------------------------------------------------
+
+class _Header extends StatelessWidget {
+  const _Header({required this.theme, required this.isCompact});
+
+  final FlutterFlowTheme theme;
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: theme.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(999.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.calendar_today_rounded,
+                  size: 14.0, color: theme.primary),
+              const SizedBox(width: 6.0),
+              Text(
+                'Calendário',
+                style: GoogleFonts.interTight(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w700,
+                  color: theme.primary,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        Text(
+          'Calendário de aulas',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: theme.headlineMedium.override(
+            font: GoogleFonts.interTight(fontWeight: FontWeight.w800),
+            fontSize: isCompact ? 22.0 : 26.0,
+            fontWeight: FontWeight.w800,
+            color: theme.primaryText,
+            letterSpacing: -0.4,
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          'Acompanhe as próximas aulas programadas.',
+          style: theme.bodyMedium.override(
+            font: GoogleFonts.inter(),
+            fontSize: 14.0,
+            color: theme.secondaryText,
+            letterSpacing: 0.0,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AulasCard wrapper
+// ---------------------------------------------------------------------------
+
+class _AulasCard extends StatelessWidget {
+  const _AulasCard({required this.theme, required this.isCompact});
+
+  final FlutterFlowTheme theme;
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.secondaryBackground,
+        borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(color: theme.alternate, width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16.0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FutureBuilder<List<AulasRow>>(
+        future: AulasTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('professor_responsavel', currentUserUid)
+              .gteOrNull(
+                'datetimeinicio_aula',
+                supaSerialize<DateTime>(getCurrentTimestamp),
+              )
+              .order('datetimeinicio_aula', ascending: true),
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Center(
+                child: Text('Erro ao carregar dados.',
+                    style: theme.bodyMedium),
+              ),
+            );
+          }
+          if (!snapshot.hasData) {
+            return Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Center(
+                child: SizedBox(
+                  width: 36.0,
+                  height: 36.0,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(theme.primary),
+                  ),
+                ),
+              ),
+            );
+          }
+          final aulas = snapshot.data!;
+          if (aulas.isEmpty) {
+            return _EmptyState(theme: theme);
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Toolbar(theme: theme, total: aulas.length),
+                const SizedBox(height: 16.0),
+                ListView.separated(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: aulas.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10.0),
+                  itemBuilder: (context, index) {
+                    return _AulaRow(
+                      theme: theme,
+                      aula: aulas[index],
+                      isCompact: isCompact,
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Toolbar
+// ---------------------------------------------------------------------------
+
+class _Toolbar extends StatelessWidget {
+  const _Toolbar({required this.theme, required this.total});
+
+  final FlutterFlowTheme theme;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: theme.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(999.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.event_rounded, size: 14.0, color: theme.primary),
+              const SizedBox(width: 6.0),
+              Text(
+                '$total ${total == 1 ? 'aula' : 'aulas'}',
+                style: GoogleFonts.interTight(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w800,
+                  color: theme.primary,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: theme.primaryBackground,
+            borderRadius: BorderRadius.circular(999.0),
+            border: Border.all(color: theme.alternate, width: 1.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.schedule_rounded,
+                  size: 13.0, color: theme.secondaryText),
+              const SizedBox(width: 4.0),
+              Text(
+                'Próximas',
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: theme.secondaryText,
+                  letterSpacing: 0.1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AulaRow
+// ---------------------------------------------------------------------------
+
+class _AulaRow extends StatefulWidget {
+  const _AulaRow({
+    required this.theme,
+    required this.aula,
+    required this.isCompact,
+  });
+
+  final FlutterFlowTheme theme;
+  final AulasRow aula;
+  final bool isCompact;
+
+  @override
+  State<_AulaRow> createState() => _AulaRowState();
+}
+
+class _AulaRowState extends State<_AulaRow> {
+  bool _hover = false;
+
+  void _openDetalhes() {
+    context.pushNamed(
+      DetalhesAulaWidget.routeName,
+      queryParameters: {
+        'idAula':
+            serializeParam(widget.aula.id, ParamType.String),
+      }.withoutNulls,
+    );
+  }
+
+  Future<void> _entrarNaAula() async {
+    final confirmou = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final browserName = detectBrowser();
+        final isChrome = browserName == 'chrome';
+        bool aceitou = false;
+        return StatefulBuilder(
+          builder: (stfContext, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              title: Text(
+                'Antes de entrar na aula',
+                style: FlutterFlowTheme.of(context).headlineSmall.override(
+                      font: GoogleFonts.interTight(
+                          fontWeight: FontWeight.w700),
+                      letterSpacing: 0.0,
+                    ),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!isChrome) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEE2E2),
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: const Color(0xFFFCA5A5)),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.warning_amber_rounded,
+                                color: Color(0xFFDC2626), size: 22),
+                            const SizedBox(width: 8.0),
+                            Expanded(
+                              child: Text(
+                                'Voce esta usando ${browserDisplayName(browserName)}. Recomendamos fortemente o Google Chrome para evitar problemas de audio e video durante a aula.',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodySmall
+                                    .override(
+                                      font: GoogleFonts.inter(
+                                          fontWeight: FontWeight.w500),
+                                      color: const Color(0xFFDC2626),
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                    ],
+                    Text(
+                      'Para garantir a melhor experiencia na aula ao vivo, siga estas dicas:',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.inter(
+                                fontWeight: FontWeight.normal),
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    _buildDicaItem(context, '1.',
+                        'Use o Google Chrome — e o navegador mais compativel com a videochamada. Edge, Safari e Firefox podem causar problemas de audio e travamentos'),
+                    _buildDicaItem(context, '2.',
+                        'Verifique sua internet — abra outro site para confirmar. Conexoes instaveis causam travamento de video e quedas de audio'),
+                    _buildDicaItem(context, '3.',
+                        'Prefira cabo ou Wi-Fi forte — dados moveis (4G/5G) podem ser instaveis. Se estiver no Wi-Fi, fique proximo ao roteador'),
+                    _buildDicaItem(context, '4.',
+                        'Feche outros programas e abas — cada aba aberta consome memoria e banda. Feche tudo que nao for essencial'),
+                    _buildDicaItem(context, '5.',
+                        'Evite computador sobrecarregado — se seu PC estiver lento, reinicie-o antes da aula'),
+                    _buildDicaItem(context, '6.',
+                        'Teste camera e microfone antes — ao entrar na aula, voce vera uma tela para selecionar e testar seus dispositivos'),
+                    const SizedBox(height: 12.0),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Checkbox(
+                            value: aceitou,
+                            activeColor: FlutterFlowTheme.of(context).primary,
+                            onChanged: (v) => setDialogState(
+                                () => aceitou = v ?? false),
+                          ),
+                        ),
+                        const SizedBox(width: 8.0),
+                        Expanded(
+                          child: Text(
+                            'Li e entendi as recomendacoes',
+                            style: FlutterFlowTheme.of(context)
+                                .bodySmall
+                                .override(
+                                  font: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w500),
+                                  letterSpacing: 0.0,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                _DialogConfirmButton(
+                  enabled: aceitou,
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    if (confirmou != true) return;
+
+    FFAppState().jaasJWT = '';
+    safeSetState(() {});
+
+    if (!mounted) return;
+    context.pushNamed(
+      SalaAulaWidget.routeName,
+      queryParameters: {
+        'aulaId': serializeParam(widget.aula.id, ParamType.String),
+      }.withoutNulls,
+    );
+  }
+
+  bool get _isLive {
+    final inicio = widget.aula.datetimeinicioAula;
+    final termino = widget.aula.datetimeTerminoaula;
+    if (inicio == null || termino == null) return false;
+    final agora = getCurrentTimestamp.secondsSinceEpoch;
+    return agora >= functions.inicioMenos5Min(inicio)!.secondsSinceEpoch &&
+        agora <= termino.secondsSinceEpoch;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = widget.theme;
+    final aula = widget.aula;
+    final inicio = aula.datetimeinicioAula;
+    final termino = aula.datetimeTerminoaula;
+    final lc = FFLocalizations.of(context).languageCode;
+    final dia = inicio != null ? dateTimeFormat('d', inicio, locale: lc) : '--';
+    final mes = inicio != null
+        ? dateTimeFormat('MMM', inicio, locale: lc).toUpperCase()
+        : '';
+    final horario = (inicio != null && termino != null)
+        ? '${dateTimeFormat('Hm', inicio, locale: lc)} - ${dateTimeFormat('Hm', termino, locale: lc)}'
+        : '--';
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: t.primaryBackground,
+          borderRadius: BorderRadius.circular(14.0),
+          border: Border.all(
+            color: _hover ? t.primary.withValues(alpha: 0.30) : t.alternate,
+            width: 1.0,
+          ),
+          boxShadow: _hover
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 14.0,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : const [],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 12.0),
+          child: widget.isCompact
+              ? _buildCompact(t, dia, mes, horario)
+              : _buildWide(t, dia, mes, horario),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWide(FlutterFlowTheme t, String dia, String mes, String horario) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _DateBlock(theme: t, dia: dia, mes: mes, isLive: _isLive),
+        const SizedBox(width: 14.0),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FutureBuilder<List<TurmasRow>>(
+                future: TurmasTable().querySingleRow(
+                  queryFn: (q) => q.eqOrNull('id', widget.aula.turma),
+                ),
+                builder: (context, snapshot) {
+                  final nome = (snapshot.data?.isNotEmpty ?? false)
+                      ? (snapshot.data!.first.nomeDaTurma ?? '—')
+                      : '—';
+                  return Text(
+                    nome,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.interTight(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w800,
+                      color: t.primaryText,
+                      letterSpacing: -0.2,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 6.0),
+              Row(
+                children: [
+                  _StatusChip(theme: t, status: widget.aula.statusAula),
+                  const SizedBox(width: 8.0),
+                  Icon(Icons.access_time_rounded,
+                      size: 13.0, color: t.secondaryText),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    horario,
+                    style: GoogleFonts.inter(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w600,
+                      color: t.secondaryText,
+                      letterSpacing: 0.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12.0),
+        _PillButton(
+          theme: t,
+          label: 'Detalhes',
+          icon: Icons.arrow_forward_rounded,
+          filled: false,
+          onTap: _openDetalhes,
+        ),
+        if (_isLive) ...[
+          const SizedBox(width: 8.0),
+          _PillButton(
+            theme: t,
+            label: 'Entrar na aula',
+            icon: Icons.video_call_rounded,
+            filled: true,
+            onTap: _entrarNaAula,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCompact(FlutterFlowTheme t, String dia, String mes, String horario) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _DateBlock(theme: t, dia: dia, mes: mes, isLive: _isLive),
+            const SizedBox(width: 12.0),
+            Expanded(
+              child: FutureBuilder<List<TurmasRow>>(
+                future: TurmasTable().querySingleRow(
+                  queryFn: (q) => q.eqOrNull('id', widget.aula.turma),
+                ),
+                builder: (context, snapshot) {
+                  final nome = (snapshot.data?.isNotEmpty ?? false)
+                      ? (snapshot.data!.first.nomeDaTurma ?? '—')
+                      : '—';
+                  return Text(
+                    nome,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.interTight(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w800,
+                      color: t.primaryText,
+                      letterSpacing: -0.2,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10.0),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 6.0,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            _StatusChip(theme: t, status: widget.aula.statusAula),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              decoration: BoxDecoration(
+                color: t.primaryBackground,
+                borderRadius: BorderRadius.circular(999.0),
+                border: Border.all(color: t.alternate, width: 1.0),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.access_time_rounded,
+                      size: 12.0, color: t.secondaryText),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    horario,
+                    style: GoogleFonts.inter(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: t.secondaryText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10.0),
+        Row(
+          children: [
+            Expanded(
+              child: _PillButton(
+                theme: t,
+                label: 'Detalhes',
+                icon: Icons.arrow_forward_rounded,
+                filled: false,
+                onTap: _openDetalhes,
+                fullWidth: true,
+              ),
+            ),
+            if (_isLive) ...[
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: _PillButton(
+                  theme: t,
+                  label: 'Entrar',
+                  icon: Icons.video_call_rounded,
+                  filled: true,
+                  onTap: _entrarNaAula,
+                  fullWidth: true,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// DateBlock
+// ---------------------------------------------------------------------------
+
+class _DateBlock extends StatelessWidget {
+  const _DateBlock({
+    required this.theme,
+    required this.dia,
+    required this.mes,
+    required this.isLive,
+  });
+
+  final FlutterFlowTheme theme;
+  final String dia;
+  final String mes;
+  final bool isLive;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = isLive ? theme.success : theme.primary;
+    return Container(
+      width: 60.0,
+      height: 60.0,
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: accent.withValues(alpha: 0.25), width: 1.0),
+      ),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            numero,
-            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                  font: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                  letterSpacing: 0.0,
-                ),
+            dia,
+            style: GoogleFonts.interTight(
+              fontSize: 22.0,
+              fontWeight: FontWeight.w800,
+              color: accent,
+              letterSpacing: -0.6,
+              height: 1.0,
+            ),
           ),
-          SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              texto,
-              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    font: GoogleFonts.inter(fontWeight: FontWeight.normal),
-                    letterSpacing: 0.0,
-                  ),
+          const SizedBox(height: 2.0),
+          Text(
+            mes,
+            style: GoogleFonts.interTight(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w800,
+              color: accent,
+              letterSpacing: 0.6,
             ),
           ),
         ],
       ),
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// StatusChip
+// ---------------------------------------------------------------------------
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.theme, required this.status});
+
+  final FlutterFlowTheme theme;
+  final String? status;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = (status ?? '').trim();
+    final lower = s.toLowerCase();
+    Color bg;
+    Color fg;
+    IconData icon;
+
+    if (lower.contains('finaliz')) {
+      bg = theme.success.withValues(alpha: 0.14);
+      fg = theme.success;
+      icon = Icons.check_circle_rounded;
+    } else if (lower.contains('andamento')) {
+      bg = theme.primary.withValues(alpha: 0.14);
+      fg = theme.primary;
+      icon = Icons.play_circle_rounded;
+    } else if (lower.contains('concl')) {
+      bg = theme.success.withValues(alpha: 0.14);
+      fg = theme.success;
+      icon = Icons.task_alt_rounded;
+    } else if (lower.contains('aguardando')) {
+      bg = theme.warning.withValues(alpha: 0.16);
+      fg = theme.warning;
+      icon = Icons.schedule_rounded;
+    } else if (s.isEmpty) {
+      bg = theme.alternate;
+      fg = theme.secondaryText;
+      icon = Icons.help_outline_rounded;
+    } else {
+      bg = theme.alternate;
+      fg = theme.secondaryText;
+      icon = Icons.info_outline_rounded;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9.0, vertical: 4.0),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(999.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12.0, color: fg),
+          const SizedBox(width: 4.0),
+          Text(
+            s.isEmpty ? 'Sem status' : s,
+            style: GoogleFonts.inter(
+              fontSize: 11.0,
+              fontWeight: FontWeight.w700,
+              color: fg,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// PillButton (filled / outline)
+// ---------------------------------------------------------------------------
+
+class _PillButton extends StatefulWidget {
+  const _PillButton({
+    required this.theme,
+    required this.label,
+    required this.icon,
+    required this.filled,
+    required this.onTap,
+    this.fullWidth = false,
+  });
+
+  final FlutterFlowTheme theme;
+  final String label;
+  final IconData icon;
+  final bool filled;
+  final VoidCallback onTap;
+  final bool fullWidth;
+
+  @override
+  State<_PillButton> createState() => _PillButtonState();
+}
+
+class _PillButtonState extends State<_PillButton> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = widget.theme;
+    final filled = widget.filled;
+
+    final Color bg = filled
+        ? (_hover ? t.primary : t.primary)
+        : (_hover ? t.primary.withValues(alpha: 0.08) : t.primaryBackground);
+    final Color fg = filled
+        ? Colors.white
+        : (_hover ? t.primary : t.primaryText);
+    final Color borderColor = filled
+        ? Colors.transparent
+        : (_hover ? t.primary.withValues(alpha: 0.40) : t.alternate);
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(999.0),
+          border: Border.all(color: borderColor, width: 1.0),
+          boxShadow: filled && _hover
+              ? [
+                  BoxShadow(
+                    color: t.primary.withValues(alpha: 0.30),
+                    blurRadius: 12.0,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : const [],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(999.0),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(999.0),
+            onTap: widget.onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14.0, vertical: 8.0),
+              child: Row(
+                mainAxisSize:
+                    widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.label,
+                    style: GoogleFonts.interTight(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      color: fg,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  const SizedBox(width: 6.0),
+                  Icon(widget.icon, size: 14.0, color: fg),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty state
+// ---------------------------------------------------------------------------
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.theme});
+
+  final FlutterFlowTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 56.0),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72.0,
+              height: 72.0,
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.10),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Icon(Icons.event_available_rounded,
+                  color: theme.primary, size: 32.0),
+            ),
+            const SizedBox(height: 20.0),
+            Text(
+              'Nenhuma aula programada',
+              style: GoogleFonts.interTight(
+                fontSize: 17.0,
+                fontWeight: FontWeight.w800,
+                color: theme.primaryText,
+                letterSpacing: -0.2,
+              ),
+            ),
+            const SizedBox(height: 6.0),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360.0),
+              child: Text(
+                'Quando suas turmas tiverem aulas marcadas, elas aparecerão aqui.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 13.0,
+                  color: theme.secondaryText,
+                  letterSpacing: 0.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dialog confirm button
+// ---------------------------------------------------------------------------
+
+class _DialogConfirmButton extends StatelessWidget {
+  const _DialogConfirmButton({
+    required this.enabled,
+    required this.onPressed,
+  });
+
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(999.0),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(999.0),
+          onTap: enabled ? onPressed : null,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 22.0, vertical: 11.0),
+            decoration: BoxDecoration(
+              color: enabled ? theme.primary : const Color(0xFFCCCCCC),
+              borderRadius: BorderRadius.circular(999.0),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Confirmar e entrar',
+                  style: GoogleFonts.interTight(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                const SizedBox(width: 6.0),
+                const Icon(Icons.arrow_forward_rounded,
+                    size: 15.0, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dica item (used in pre-class dialog)
+// ---------------------------------------------------------------------------
+
+Widget _buildDicaItem(BuildContext context, String numero, String texto) {
+  return Padding(
+    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 4.0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          numero,
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                font: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                letterSpacing: 0.0,
+              ),
+        ),
+        const SizedBox(width: 8.0),
+        Expanded(
+          child: Text(
+            texto,
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  font: GoogleFonts.inter(fontWeight: FontWeight.normal),
+                  letterSpacing: 0.0,
+                ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

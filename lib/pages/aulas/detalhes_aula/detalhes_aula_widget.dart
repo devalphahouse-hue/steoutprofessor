@@ -129,198 +129,84 @@ class _DetalhesAulaWidgetState extends State<DetalhesAulaWidget> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(valueOrDefault<double>(
-                              MediaQuery.sizeOf(context).width <
+                            padding: EdgeInsets.symmetric(
+                              horizontal: MediaQuery.sizeOf(context).width <
                                       kBreakpointSmall
                                   ? 16.0
-                                  : 48.0,
-                              0.0,
-                            )),
-                            child: Container(
-                              width: MediaQuery.sizeOf(context).width * 1.0,
-                              constraints: BoxConstraints(
-                                maxWidth: 1440.0,
-                              ),
-                              decoration: BoxDecoration(),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Detalhes da Aula',
-                                        style: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .override(
-                                              font: GoogleFonts.interTight(
-                                                fontWeight:
-                                                    FlutterFlowTheme.of(context)
-                                                        .headlineSmall
-                                                        .fontWeight,
-                                                fontStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .headlineSmall
-                                                        .fontStyle,
-                                              ),
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineSmall
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineSmall
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                      InkWell(
-                                        splashColor: Colors.transparent,
-                                        focusColor: Colors.transparent,
-                                        hoverColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        onTap: () async {
-                                          context.safePop();
-                                        },
-                                        child: Icon(
-                                          Icons.undo,
-                                          color: FlutterFlowTheme.of(context)
-                                              .primaryText,
-                                          size: 24.0,
-                                        ),
-                                      ),
-                                    ],
+                                  : MediaQuery.sizeOf(context).width <
+                                          kBreakpointLarge
+                                      ? 24.0
+                                      : 48.0,
+                              vertical: 24.0,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  _AulaHeader(
+                                    theme: FlutterFlowTheme.of(context),
+                                    isCompact: MediaQuery.sizeOf(context).width <
+                                        kBreakpointMedium,
+                                    statusAula:
+                                        DetalhesAulaStruct.maybeFromMap(
+                                      colContentDetalhesAulaResponse.jsonBody,
+                                    )?.statusAula,
+                                    onBack: () => context.safePop(),
                                   ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    elevation: 2.0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
+                                  Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius:
+                                          BorderRadius.circular(16.0),
+                                      border: Border.all(
                                         color: FlutterFlowTheme.of(context)
-                                            .primaryBackground,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 4.0,
-                                            color: Color(0x33000000),
-                                            offset: Offset(
-                                              0.0,
-                                              2.0,
-                                            ),
-                                          )
-                                        ],
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            .alternate,
+                                        width: 1.0,
                                       ),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, -1.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Align(
-                                                          alignment:
-                                                              AlignmentDirectional(
-                                                                  0.0, -1.0),
-                                                          child: Text(
-                                                            DetalhesAulaStruct.maybeFromMap(
-                                                                            colContentDetalhesAulaResponse.jsonBody)
-                                                                        ?.statusAula ==
-                                                                    'Finalizada'
-                                                                ? 'Informações da Aula - Finalizada'
-                                                                : 'Informações da Aula',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .titleSmall
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .interTight(
-                                                                    fontWeight: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontWeight,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontStyle,
-                                                                  ),
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontStyle,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        Align(
-                                                          alignment:
-                                                              AlignmentDirectional(
-                                                                  0.0, -1.0),
-                                                          child: Text(
-                                                            DetalhesAulaStruct.maybeFromMap(
-                                                                            colContentDetalhesAulaResponse.jsonBody)
-                                                                        ?.statusAula ==
-                                                                    'Finalizada'
-                                                                ? 'Esta é uma tela apenas de visualização de histórico das informações da aula. Não é possível realizar alterações.'
-                                                                : 'As informações da aula são apenas para visualização. Caso precise editar alguma informação abaixo, acessar os “Detalhes da Turma”.',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .titleSmall
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .interTight(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .normal,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontStyle,
-                                                                  ),
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontStyle,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.04),
+                                          blurRadius: 16.0,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                            _AulaSectionTitle(
+                                              theme:
+                                                  FlutterFlowTheme.of(context),
+                                              icon: Icons.info_outline_rounded,
+                                              title: 'Informações da aula',
+                                              subtitle:
+                                                  'Dados da aula, alunos e status.',
+                                              trailing: _AulaStatusChip(
+                                                theme:
+                                                    FlutterFlowTheme.of(context),
+                                                status: DetalhesAulaStruct
+                                                        .maybeFromMap(
+                                                            colContentDetalhesAulaResponse
+                                                                .jsonBody)
+                                                    ?.statusAula,
                                               ),
+                                            ),
+                                            _AulaInfoBanner(
+                                              theme:
+                                                  FlutterFlowTheme.of(context),
+                                              isFinalizada: DetalhesAulaStruct
+                                                          .maybeFromMap(
+                                                              colContentDetalhesAulaResponse
+                                                                  .jsonBody)
+                                                      ?.statusAula ==
+                                                  'Finalizada',
                                             ),
                                             Row(
                                               mainAxisSize: MainAxisSize.max,
@@ -1116,420 +1002,93 @@ class _DetalhesAulaWidgetState extends State<DetalhesAulaWidget> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Material(
-                                                          color: Colors
-                                                              .transparent,
-                                                          elevation: 2.0,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20.0),
-                                                          ),
-                                                          child: Container(
-                                                            width: MediaQuery
-                                                                        .sizeOf(
-                                                                            context)
-                                                                    .width *
-                                                                0.55,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryBackground,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20.0),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(
-                                                                          15.0),
-                                                              child: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                children: [
-                                                                  Align(
-                                                                    alignment:
-                                                                        AlignmentDirectional(
-                                                                            -1.0,
-                                                                            -1.0),
-                                                                    child: Text(
-                                                                      'Status da aula',
-                                                                      style: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .titleSmall
-                                                                          .override(
-                                                                            font:
-                                                                                GoogleFonts.interTight(
-                                                                              fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                              fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                            ),
-                                                                            letterSpacing:
-                                                                                0.0,
-                                                                            fontWeight:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                          ),
-                                                                    ),
-                                                                  ),
-                                                                  Row(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
-                                                                    children: [
-                                                                      Icon(
-                                                                        Icons
-                                                                            .circle_sharp,
-                                                                        color:
-                                                                            () {
-                                                                          if (DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.statusAula ==
-                                                                              'Aguardando Planning') {
-                                                                            return FlutterFlowTheme.of(context).secondary;
-                                                                          } else if (DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.statusAula ==
-                                                                              'Planning concluído') {
-                                                                            return FlutterFlowTheme.of(context).success;
-                                                                          } else {
-                                                                            return FlutterFlowTheme.of(context).primaryText;
-                                                                          }
-                                                                        }(),
-                                                                        size:
-                                                                            12.0,
-                                                                      ),
-                                                                      Text(
-                                                                        valueOrDefault<
-                                                                            String>(
-                                                                          DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)
-                                                                              ?.statusAula,
-                                                                          'status',
-                                                                        ),
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              font: GoogleFonts.inter(
-                                                                                fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                              ),
-                                                                              letterSpacing: 0.0,
-                                                                              fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                              fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                            ),
-                                                                      ),
-                                                                    ].divide(SizedBox(
-                                                                        width:
-                                                                            12.0)),
-                                                                  ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        10.0)),
-                                                              ),
-                                                            ),
-                                                          ),
+                                                        _AulaAlunosBlock(
+                                                          theme: FlutterFlowTheme
+                                                              .of(context),
+                                                          label:
+                                                              'Alunos escalados',
+                                                          icon: Icons
+                                                              .groups_rounded,
+                                                          nomes: (DetalhesAulaStruct
+                                                                          .maybeFromMap(
+                                                                              colContentDetalhesAulaResponse
+                                                                                  .jsonBody)
+                                                                      ?.alunosConvidados ??
+                                                                  [])
+                                                              .map((e) => e.nome)
+                                                              .toList(),
+                                                          emptyText:
+                                                              'Nenhum aluno escalado.',
                                                         ),
-                                                        Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          children: [
-                                                            Material(
-                                                              color: Colors
-                                                                  .transparent,
-                                                              elevation: 2.0,
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20.0),
-                                                              ),
-                                                              child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryBackground,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20.0),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              15.0),
-                                                                  child: Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Align(
-                                                                        alignment: AlignmentDirectional(
-                                                                            -1.0,
-                                                                            -1.0),
-                                                                        child:
-                                                                            Text(
-                                                                          'Alunos escalados:',
-                                                                          style: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .override(
-                                                                                font: GoogleFonts.interTight(
-                                                                                  fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                ),
-                                                                                letterSpacing: 0.0,
-                                                                                fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                      Builder(
-                                                                        builder:
-                                                                            (context) {
-                                                                          final alunosConvidados =
-                                                                              DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.alunosConvidados?.toList() ?? [];
-
-                                                                          return Column(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize.max,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children:
-                                                                                List.generate(alunosConvidados.length, (alunosConvidadosIndex) {
-                                                                              final alunosConvidadosItem = alunosConvidados[alunosConvidadosIndex];
-                                                                              return Text(
-                                                                                alunosConvidadosItem.nome,
-                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      font: GoogleFonts.inter(
-                                                                                        fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                      ),
-                                                                                      letterSpacing: 0.0,
-                                                                                      fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                      fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                    ),
-                                                                              );
-                                                                            }).divide(SizedBox(height: 4.0)),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ].divide(SizedBox(
-                                                                        height:
-                                                                            10.0)),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            if (DetalhesAulaStruct.maybeFromMap(
+                                                        if (DetalhesAulaStruct
+                                                                    .maybeFromMap(
                                                                         colContentDetalhesAulaResponse
                                                                             .jsonBody)
-                                                                    ?.statusAula ==
-                                                                'Finalizada')
-                                                              Material(
-                                                                color: Colors
-                                                                    .transparent,
-                                                                elevation: 2.0,
-                                                                shape:
-                                                                    RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20.0),
-                                                                ),
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBackground,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            20.0),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            15.0),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children:
-                                                                          [
-                                                                        Align(
-                                                                          alignment: AlignmentDirectional(
-                                                                              -1.0,
-                                                                              -1.0),
-                                                                          child:
-                                                                              Text(
-                                                                            'Alunos presentes:',
-                                                                            style: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                  font: GoogleFonts.interTight(
-                                                                                    fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                  ),
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                ),
-                                                                          ),
-                                                                        ),
-                                                                        Builder(
-                                                                          builder:
-                                                                              (context) {
-                                                                            final alunosPresentes =
-                                                                                DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.alunosPresentes?.toList() ?? [];
-
-                                                                            return Column(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: List.generate(alunosPresentes.length, (alunosPresentesIndex) {
-                                                                                final alunosPresentesItem = alunosPresentes[alunosPresentesIndex];
-                                                                                return Text(
-                                                                                  alunosPresentesItem.nome,
-                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        font: GoogleFonts.inter(
-                                                                                          fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                        ),
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                                      ),
-                                                                                );
-                                                                              }).divide(SizedBox(height: 4.0)),
-                                                                            );
-                                                                          },
-                                                                        ),
-                                                                      ].divide(SizedBox(
-                                                                              height: 10.0)),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                          ].divide(SizedBox(
-                                                              width: 12.0)),
-                                                        ),
+                                                                ?.statusAula ==
+                                                            'Finalizada')
+                                                          _AulaAlunosBlock(
+                                                            theme:
+                                                                FlutterFlowTheme
+                                                                    .of(context),
+                                                            label:
+                                                                'Alunos presentes',
+                                                            icon: Icons
+                                                                .how_to_reg_rounded,
+                                                            nomes: (DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.alunosPresentes ??
+                                                                    [])
+                                                                .map((e) =>
+                                                                    e.nome)
+                                                                .toList(),
+                                                            emptyText:
+                                                                'Nenhum aluno marcou presença.',
+                                                          ),
                                                       ].divide(SizedBox(
-                                                          height: 10.0)),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                    decoration: BoxDecoration(),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: <Widget>[]
-                                                          .divide(SizedBox(
-                                                              height: 10.0)),
+                                                          height: 12.0)),
                                                     ),
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ].divide(SizedBox(height: 30.0)),
+                                          ].divide(SizedBox(height: 20.0)),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    elevation: 2.0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
+                                  Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius:
+                                          BorderRadius.circular(16.0),
+                                      border: Border.all(
                                         color: FlutterFlowTheme.of(context)
-                                            .primaryBackground,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 4.0,
-                                            color: Color(0x33000000),
-                                            offset: Offset(
-                                              0.0,
-                                              2.0,
-                                            ),
-                                          )
-                                        ],
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
+                                            .alternate,
+                                        width: 1.0,
                                       ),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(12.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, -1.0),
-                                              child: Container(
-                                                decoration: BoxDecoration(),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Align(
-                                                          alignment:
-                                                              AlignmentDirectional(
-                                                                  0.0, -1.0),
-                                                          child: Text(
-                                                            'Planning',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .titleSmall
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .interTight(
-                                                                    fontWeight: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontWeight,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontStyle,
-                                                                  ),
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontStyle,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.04),
+                                          blurRadius: 16.0,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                            _AulaSectionTitle(
+                                              theme:
+                                                  FlutterFlowTheme.of(context),
+                                              icon: Icons
+                                                  .menu_book_outlined,
+                                              title: 'Planning',
+                                              subtitle:
+                                                  'Conteúdos vinculados, utilizados e anotações.',
                                             ),
                                             Row(
                                               mainAxisSize: MainAxisSize.max,
@@ -2282,14 +1841,12 @@ class _DetalhesAulaWidgetState extends State<DetalhesAulaWidget> {
                                                     ),
                                                 ].divide(SizedBox(width: 12.0)),
                                               ),
-                                          ].divide(SizedBox(height: 30.0)),
+                                          ].divide(SizedBox(height: 20.0)),
                                         ),
                                       ),
                                     ),
-                                  ),
                                 ].divide(SizedBox(height: 16.0)),
                               ),
-                            ),
                           ),
                         ],
                       ),
@@ -2300,6 +1857,527 @@ class _DetalhesAulaWidgetState extends State<DetalhesAulaWidget> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ===========================================================================
+// Helpers visuais — polish da tela Detalhes da Aula
+// ===========================================================================
+
+class _AulaHeader extends StatelessWidget {
+  const _AulaHeader({
+    required this.theme,
+    required this.isCompact,
+    required this.statusAula,
+    required this.onBack,
+  });
+
+  final FlutterFlowTheme theme;
+  final bool isCompact;
+  final String? statusAula;
+  final VoidCallback onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final isFinalizada = (statusAula ?? '').toLowerCase() == 'finalizada';
+    final chip = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+      decoration: BoxDecoration(
+        color: theme.primary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(999.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.event_note_rounded, size: 14.0, color: theme.primary),
+          const SizedBox(width: 6.0),
+          Text(
+            'Aula',
+            style: GoogleFonts.interTight(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w700,
+              color: theme.primary,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final titleCol = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        chip,
+        const SizedBox(height: 12.0),
+        Text(
+          'Detalhes da aula',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: theme.headlineMedium.override(
+            font: GoogleFonts.interTight(fontWeight: FontWeight.w800),
+            fontSize: isCompact ? 22.0 : 26.0,
+            fontWeight: FontWeight.w800,
+            color: theme.primaryText,
+            letterSpacing: -0.4,
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          isFinalizada
+              ? 'Visualização do histórico — não é possível editar.'
+              : 'Informações, planning e anotações desta aula.',
+          style: theme.bodyMedium.override(
+            font: GoogleFonts.inter(),
+            fontSize: 14.0,
+            color: theme.secondaryText,
+            letterSpacing: 0.0,
+          ),
+        ),
+      ],
+    );
+
+    final backBtn = _AulaBackButton(theme: theme, onTap: onBack);
+
+    if (isCompact) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: backBtn,
+          ),
+          const SizedBox(width: 12.0),
+          Expanded(child: titleCol),
+        ],
+      );
+    }
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 6.0),
+          child: backBtn,
+        ),
+        const SizedBox(width: 14.0),
+        Expanded(child: titleCol),
+      ],
+    );
+  }
+}
+
+class _AulaBackButton extends StatefulWidget {
+  const _AulaBackButton({required this.theme, required this.onTap});
+
+  final FlutterFlowTheme theme;
+  final VoidCallback onTap;
+
+  @override
+  State<_AulaBackButton> createState() => _AulaBackButtonState();
+}
+
+class _AulaBackButtonState extends State<_AulaBackButton> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = widget.theme;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedScale(
+        scale: _hover ? 1.04 : 1.0,
+        duration: const Duration(milliseconds: 140),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          width: 38.0,
+          height: 38.0,
+          decoration: BoxDecoration(
+            color: _hover
+                ? t.primary.withValues(alpha: 0.10)
+                : t.primaryBackground,
+            borderRadius: BorderRadius.circular(10.0),
+            border: Border.all(color: t.alternate, width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 6.0,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(10.0),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10.0),
+              onTap: widget.onTap,
+              child: Tooltip(
+                message: 'Voltar',
+                child: Center(
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    size: 18.0,
+                    color: _hover ? t.primary : t.primaryText,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AulaSectionTitle extends StatelessWidget {
+  const _AulaSectionTitle({
+    required this.theme,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+  });
+
+  final FlutterFlowTheme theme;
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 38.0,
+          height: 38.0,
+          decoration: BoxDecoration(
+            color: theme.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          alignment: Alignment.center,
+          child: Icon(icon, color: theme.primary, size: 20.0),
+        ),
+        const SizedBox(width: 12.0),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.titleMedium.override(
+                  font: GoogleFonts.interTight(fontWeight: FontWeight.w800),
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w800,
+                  color: theme.primaryText,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2.0),
+                Text(
+                  subtitle!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 13.0,
+                    color: theme.secondaryText,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        if (trailing != null) ...[
+          const SizedBox(width: 12.0),
+          trailing!,
+        ],
+      ],
+    );
+  }
+}
+
+class _AulaStatusChip extends StatelessWidget {
+  const _AulaStatusChip({required this.theme, required this.status});
+
+  final FlutterFlowTheme theme;
+  final String? status;
+
+  @override
+  Widget build(BuildContext context) {
+    final raw = (status ?? '').trim();
+    final lower = raw.toLowerCase();
+    Color bg;
+    Color fg;
+    IconData icon;
+    String label = raw.isEmpty ? 'Sem status' : raw;
+    if (lower.contains('cancel')) {
+      bg = const Color(0xFFFEE2E2);
+      fg = const Color(0xFF991B1B);
+      icon = Icons.cancel_rounded;
+    } else if (lower.contains('aguard')) {
+      bg = const Color(0xFFFEF3C7);
+      fg = const Color(0xFF92400E);
+      icon = Icons.schedule_rounded;
+    } else if (lower.contains('andamento') || lower.contains('iniciada')) {
+      bg = const Color(0xFFDBEAFE);
+      fg = const Color(0xFF1E40AF);
+      icon = Icons.play_circle_fill_rounded;
+    } else if (lower.contains('conclu') ||
+        lower.contains('finaliz') ||
+        lower == 'finalizada') {
+      bg = const Color(0xFFD1FAE5);
+      fg = const Color(0xFF065F46);
+      icon = Icons.check_circle_rounded;
+    } else if (raw.isEmpty) {
+      bg = theme.alternate.withValues(alpha: 0.5);
+      fg = theme.secondaryText;
+      icon = Icons.help_outline_rounded;
+    } else {
+      bg = theme.primary.withValues(alpha: 0.10);
+      fg = theme.primary;
+      icon = Icons.info_outline_rounded;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(999.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14.0, color: fg),
+          const SizedBox(width: 6.0),
+          Text(
+            label,
+            style: GoogleFonts.interTight(
+              fontWeight: FontWeight.w800,
+              fontSize: 12.0,
+              color: fg,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AulaAlunosBlock extends StatelessWidget {
+  const _AulaAlunosBlock({
+    required this.theme,
+    required this.label,
+    required this.nomes,
+    this.icon = Icons.groups_rounded,
+    this.emptyText = 'Nenhum aluno',
+  });
+
+  final FlutterFlowTheme theme;
+  final String label;
+  final List<String> nomes;
+  final IconData icon;
+  final String emptyText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14.0),
+      decoration: BoxDecoration(
+        color: theme.primaryBackground,
+        borderRadius: BorderRadius.circular(14.0),
+        border: Border.all(color: theme.alternate, width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 14.0, color: theme.secondaryText),
+              const SizedBox(width: 6.0),
+              Text(
+                label.toUpperCase(),
+                style: GoogleFonts.interTight(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  color: theme.secondaryText,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 7.0, vertical: 2.0),
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(999.0),
+                ),
+                child: Text(
+                  nomes.length.toString(),
+                  style: GoogleFonts.interTight(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.w800,
+                    color: theme.primary,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12.0),
+          if (nomes.isEmpty)
+            Text(
+              emptyText,
+              style: GoogleFonts.inter(
+                fontSize: 13.0,
+                color: theme.secondaryText,
+                fontStyle: FontStyle.italic,
+              ),
+            )
+          else
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: nomes
+                  .map((n) => _AulaAlunoChip(theme: theme, nome: n))
+                  .toList(),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AulaAlunoChip extends StatelessWidget {
+  const _AulaAlunoChip({required this.theme, required this.nome});
+
+  final FlutterFlowTheme theme;
+  final String nome;
+
+  @override
+  Widget build(BuildContext context) {
+    final n = nome.trim();
+    final initial = n.isNotEmpty ? n.characters.first.toUpperCase() : '?';
+    return Container(
+      padding: const EdgeInsets.fromLTRB(4.0, 4.0, 12.0, 4.0),
+      decoration: BoxDecoration(
+        color: theme.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(999.0),
+        border: Border.all(
+          color: theme.primary.withValues(alpha: 0.18),
+          width: 1.0,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 24.0,
+            height: 24.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: theme.primary.withValues(alpha: 0.14),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              initial,
+              style: GoogleFonts.interTight(
+                fontSize: 11.0,
+                fontWeight: FontWeight.w800,
+                color: theme.primary,
+                letterSpacing: 0.0,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Text(
+            n.isEmpty ? '—' : n,
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: theme.primaryText,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AulaInfoBanner extends StatelessWidget {
+  const _AulaInfoBanner({required this.theme, required this.isFinalizada});
+
+  final FlutterFlowTheme theme;
+  final bool isFinalizada;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isFinalizada
+        ? const Color(0xFF065F46)
+        : const Color(0xFF92400E);
+    final bg = isFinalizada
+        ? const Color(0xFFD1FAE5)
+        : const Color(0xFFFEF3C7);
+    final icon = isFinalizada
+        ? Icons.check_circle_rounded
+        : Icons.info_rounded;
+    final title = isFinalizada ? 'Aula finalizada' : 'Apenas visualização';
+    final body = isFinalizada
+        ? 'Esta tela mostra o histórico desta aula. Edição não é permitida.'
+        : 'As informações abaixo são apenas para consulta. Para editar, acesse "Detalhes da Turma".';
+
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: color.withValues(alpha: 0.20), width: 1.0),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 18.0),
+          const SizedBox(width: 10.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.interTight(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                const SizedBox(height: 2.0),
+                Text(
+                  body,
+                  style: GoogleFonts.inter(
+                    fontSize: 12.5,
+                    color: color,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

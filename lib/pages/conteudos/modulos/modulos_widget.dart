@@ -1,14 +1,10 @@
-import '/backend/schema/structs/index.dart';
 import '/backend/supabase/supabase.dart';
 import '/componentes/sidebar/sidebar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'modulos_model.dart';
 export 'modulos_model.dart';
 
@@ -29,26 +25,42 @@ class ModulosWidget extends StatefulWidget {
 
 class _ModulosWidgetState extends State<ModulosWidget> {
   late ModulosModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ModulosModel());
-
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
   void dispose() {
     _model.dispose();
-
     super.dispose();
+  }
+
+  double _hPad(double width) {
+    if (width < 480) return 16.0;
+    if (width < 992) return 24.0;
+    return 48.0;
+  }
+
+  int _cols(double width) {
+    if (width < 600) return 1;
+    if (width < 900) return 2;
+    if (width < 1200) return 3;
+    if (width < 1500) return 4;
+    return 5;
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final isCompact = width < 768;
+    final hPad = _hPad(width);
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -56,7 +68,7 @@ class _ModulosWidgetState extends State<ModulosWidget> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+        backgroundColor: theme.secondaryBackground,
         body: SafeArea(
           top: true,
           child: Row(
@@ -66,397 +78,635 @@ class _ModulosWidgetState extends State<ModulosWidget> {
               wrapWithModel(
                 model: _model.sidebarModel,
                 updateCallback: () => safeSetState(() {}),
-                child: SidebarWidget(
-                  route: 'Modulos',
-                ),
+                child: SidebarWidget(route: 'Modulos'),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   primary: false,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(valueOrDefault<double>(
-                          MediaQuery.sizeOf(context).width < kBreakpointSmall
-                              ? 16.0
-                              : 48.0,
-                          0.0,
-                        )),
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width * 1.0,
-                          constraints: BoxConstraints(
-                            maxWidth: 1440.0,
-                          ),
-                          decoration: BoxDecoration(),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Módulos',
-                                style: FlutterFlowTheme.of(context)
-                                    .headlineSmall
-                                    .override(
-                                      font: GoogleFonts.interTight(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .headlineSmall
-                                            .fontStyle,
-                                      ),
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .headlineSmall
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .headlineSmall
-                                          .fontStyle,
-                                    ),
-                              ),
-                              Text(
-                                'Confira o acervo de materiais disponíveis para utilizar nas aulas',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontWeight,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      letterSpacing: 0.0,
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                              ),
-                              Material(
-                                color: Colors.transparent,
-                                elevation: 2.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 0.8,
-                                  decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryBackground,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        blurRadius: 4.0,
-                                        color: Color(0x33000000),
-                                        offset: Offset(
-                                          0.0,
-                                          2.0,
-                                        ),
-                                      )
-                                    ],
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  alignment: AlignmentDirectional(-1.0, -1.0),
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.all(20.0),
-                                          child: FutureBuilder<
-                                              List<ModulosDeConteudoRow>>(
-                                            future: ModulosDeConteudoTable()
-                                                .queryRows(
-                                              queryFn: (q) => q
-                                                  .eqOrNull(
-                                                    'status_modulo',
-                                                    true,
-                                                  )
-                                                  .order('nome_modulo',
-                                                      ascending: true),
-                                            ),
-                                            builder: (context, snapshot) {
-                                              // Customize what your widget looks like when it's loading.
-                                              if (snapshot.hasError) {
-                                                return Center(
-                                                  child: Text('Erro ao carregar dados.',
-                                                      style: FlutterFlowTheme.of(context).bodyMedium),
-                                                );
-                                              }
-                                              if (!snapshot.hasData) {
-                                                return Center(
-                                                  child: SizedBox(
-                                                    width: 50.0,
-                                                    height: 50.0,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                              Color>(
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .primary,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                              List<ModulosDeConteudoRow>
-                                                  gridViewModulosDeConteudoRowList =
-                                                  snapshot.data!;
-
-                                              return GridView.builder(
-                                                padding: EdgeInsets.zero,
-                                                gridDelegate:
-                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 3,
-                                                  crossAxisSpacing: 20.0,
-                                                  mainAxisSpacing: 20.0,
-                                                  childAspectRatio: 2.0,
-                                                ),
-                                                shrinkWrap: true,
-                                                scrollDirection: Axis.vertical,
-                                                itemCount:
-                                                    gridViewModulosDeConteudoRowList
-                                                        .length,
-                                                itemBuilder:
-                                                    (context, gridViewIndex) {
-                                                  final gridViewModulosDeConteudoRow =
-                                                      gridViewModulosDeConteudoRowList[
-                                                          gridViewIndex];
-                                                  return Material(
-                                                    color: Colors.transparent,
-                                                    elevation: 2.0,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12.0),
-                                                    ),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .primaryBackground,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12.0),
-                                                      ),
-                                                      child: Padding(
-                                                        padding: EdgeInsets.all(
-                                                            12.0),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                              valueOrDefault<
-                                                                  String>(
-                                                                gridViewModulosDeConteudoRow
-                                                                    .nomeModulo,
-                                                                'Módulo',
-                                                              ),
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                    font: GoogleFonts
-                                                                        .inter(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .bodyMedium
-                                                                          .fontStyle,
-                                                                    ),
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .fontStyle,
-                                                                  ),
-                                                            ),
-                                                            Container(
-                                                              width: double
-                                                                  .infinity,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .secondaryBackground,
-                                                              ),
-                                                              child: Align(
-                                                                alignment:
-                                                                    AlignmentDirectional(
-                                                                        0.0,
-                                                                        0.0),
-                                                                child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                          0.0,
-                                                                          20.0,
-                                                                          0.0,
-                                                                          20.0),
-                                                                  child: Text(
-                                                                    'Nível: ${gridViewModulosDeConteudoRow.nivelModulo}',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.inter(
-                                                                            fontWeight:
-                                                                                FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                                                                          ),
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .bodyMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            FFButtonWidget(
-                                                              onPressed:
-                                                                  () async {
-                                                                context
-                                                                    .pushNamed(
-                                                                  CategoriasWidget
-                                                                      .routeName,
-                                                                  queryParameters:
-                                                                      {
-                                                                    'modulo':
-                                                                        serializeParam(
-                                                                      gridViewModulosDeConteudoRow
-                                                                          .id,
-                                                                      ParamType
-                                                                          .String,
-                                                                    ),
-                                                                    'aula':
-                                                                        serializeParam(
-                                                                      widget!
-                                                                          .aula,
-                                                                      ParamType
-                                                                          .String,
-                                                                    ),
-                                                                  }.withoutNulls,
-                                                                  extra: <String,
-                                                                      dynamic>{
-                                                                    '__transition_info__':
-                                                                        TransitionInfo(
-                                                                      hasTransition:
-                                                                          true,
-                                                                      transitionType:
-                                                                          PageTransitionType
-                                                                              .fade,
-                                                                      duration: Duration(
-                                                                          milliseconds:
-                                                                              0),
-                                                                    ),
-                                                                  },
-                                                                );
-                                                              },
-                                                              text:
-                                                                  '+ Ver mais',
-                                                              options:
-                                                                  FFButtonOptions(
-                                                                height: 28.0,
-                                                                padding: EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        40.0,
-                                                                        0.0,
-                                                                        40.0,
-                                                                        0.0),
-                                                                iconPadding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primary,
-                                                                textStyle: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .titleSmall
-                                                                    .override(
-                                                                      font: GoogleFonts
-                                                                          .interTight(
-                                                                        fontWeight: FlutterFlowTheme.of(context)
-                                                                            .titleSmall
-                                                                            .fontWeight,
-                                                                        fontStyle: FlutterFlowTheme.of(context)
-                                                                            .titleSmall
-                                                                            .fontStyle,
-                                                                      ),
-                                                                      color: Colors
-                                                                          .white,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .titleSmall
-                                                                          .fontWeight,
-                                                                      fontStyle: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .titleSmall
-                                                                          .fontStyle,
-                                                                    ),
-                                                                elevation: 0.0,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            25.0),
-                                                              ),
-                                                            ),
-                                                          ].divide(SizedBox(
-                                                              height: 10.0)),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ].divide(SizedBox(height: 16.0)),
-                          ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(hPad, 24.0, hPad, 24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Header(theme: theme, isCompact: isCompact),
+                        const SizedBox(height: 24.0),
+                        _ModulosGrid(
+                          theme: theme,
+                          cols: _cols(width),
+                          aula: widget.aula,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Header
+// ---------------------------------------------------------------------------
+
+class _Header extends StatelessWidget {
+  const _Header({required this.theme, required this.isCompact});
+
+  final FlutterFlowTheme theme;
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: theme.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(999.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.menu_book_rounded,
+                  size: 14.0, color: theme.primary),
+              const SizedBox(width: 6.0),
+              Text(
+                'Módulos',
+                style: GoogleFonts.interTight(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w700,
+                  color: theme.primary,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        Text(
+          'Acervo de conteúdos',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: theme.headlineMedium.override(
+            font: GoogleFonts.interTight(fontWeight: FontWeight.w800),
+            fontSize: isCompact ? 22.0 : 26.0,
+            fontWeight: FontWeight.w800,
+            color: theme.primaryText,
+            letterSpacing: -0.4,
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        Text(
+          'Confira o acervo de materiais disponíveis para utilizar nas aulas.',
+          style: theme.bodyMedium.override(
+            font: GoogleFonts.inter(),
+            fontSize: 14.0,
+            color: theme.secondaryText,
+            letterSpacing: 0.0,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Grid wrapper
+// ---------------------------------------------------------------------------
+
+class _ModulosGrid extends StatelessWidget {
+  const _ModulosGrid({
+    required this.theme,
+    required this.cols,
+    required this.aula,
+  });
+
+  final FlutterFlowTheme theme;
+  final int cols;
+  final String? aula;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.secondaryBackground,
+        borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(color: theme.alternate, width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16.0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FutureBuilder<List<ModulosDeConteudoRow>>(
+        future: ModulosDeConteudoTable().queryRows(
+          queryFn: (q) => q
+              .eqOrNull('status_modulo', true)
+              .order('nome_modulo', ascending: true),
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Center(
+                child: Text('Erro ao carregar dados.',
+                    style: theme.bodyMedium),
+              ),
+            );
+          }
+          if (!snapshot.hasData) {
+            return Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Center(
+                child: SizedBox(
+                  width: 36.0,
+                  height: 36.0,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(theme.primary),
+                  ),
+                ),
+              ),
+            );
+          }
+          final modulos = snapshot.data!;
+          if (modulos.isEmpty) {
+            return _EmptyState(theme: theme);
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Toolbar(theme: theme, total: modulos.length),
+                const SizedBox(height: 16.0),
+                GridView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: cols,
+                    crossAxisSpacing: 12.0,
+                    mainAxisSpacing: 12.0,
+                    childAspectRatio: 2.6,
+                  ),
+                  itemCount: modulos.length,
+                  itemBuilder: (context, index) {
+                    final m = modulos[index];
+                    return _ModuloCard(
+                      theme: theme,
+                      modulo: m,
+                      aula: aula,
+                      index: index,
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Toolbar
+// ---------------------------------------------------------------------------
+
+class _Toolbar extends StatelessWidget {
+  const _Toolbar({required this.theme, required this.total});
+
+  final FlutterFlowTheme theme;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: theme.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(999.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.layers_rounded,
+                  size: 14.0, color: theme.primary),
+              const SizedBox(width: 6.0),
+              Text(
+                '$total ${total == 1 ? 'módulo' : 'módulos'}',
+                style: GoogleFonts.interTight(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w800,
+                  color: theme.primary,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: theme.primaryBackground,
+            borderRadius: BorderRadius.circular(999.0),
+            border: Border.all(color: theme.alternate, width: 1.0),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.sort_by_alpha_rounded,
+                  size: 13.0, color: theme.secondaryText),
+              const SizedBox(width: 4.0),
+              Text(
+                'A → Z',
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: theme.secondaryText,
+                  letterSpacing: 0.1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ModuloCard
+// ---------------------------------------------------------------------------
+
+class _ModuloCard extends StatefulWidget {
+  const _ModuloCard({
+    required this.theme,
+    required this.modulo,
+    required this.aula,
+    required this.index,
+  });
+
+  final FlutterFlowTheme theme;
+  final ModulosDeConteudoRow modulo;
+  final String? aula;
+  final int index;
+
+  @override
+  State<_ModuloCard> createState() => _ModuloCardState();
+}
+
+class _ModuloCardState extends State<_ModuloCard> {
+  bool _hover = false;
+
+  static const _palette = <List<Color>>[
+    [Color(0xFF065F46), Color(0xFF10B981)], // verde
+    [Color(0xFF1E40AF), Color(0xFF3B82F6)], // azul
+    [Color(0xFF7E22CE), Color(0xFFA855F7)], // roxo
+    [Color(0xFFB45309), Color(0xFFF59E0B)], // âmbar
+    [Color(0xFFBE185D), Color(0xFFEC4899)], // rosa
+    [Color(0xFF155E75), Color(0xFF06B6D4)], // ciano
+  ];
+
+  void _open() {
+    context.pushNamed(
+      CategoriasWidget.routeName,
+      queryParameters: {
+        'modulo': serializeParam(widget.modulo.id, ParamType.String),
+        if (widget.aula != null && widget.aula!.isNotEmpty)
+          'aula': serializeParam(widget.aula, ParamType.String),
+      }.withoutNulls,
+      extra: <String, dynamic>{
+        '__transition_info__': TransitionInfo(
+          hasTransition: true,
+          transitionType: PageTransitionType.fade,
+          duration: const Duration(milliseconds: 0),
+        ),
+      },
+    );
+  }
+
+  String _moduloNumber(String? nome) {
+    if (nome == null) return '?';
+    final match = RegExp(r'\d+').firstMatch(nome);
+    if (match == null) return '?';
+    return match.group(0)!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = widget.theme;
+    final m = widget.modulo;
+    final colors = _palette[widget.index % _palette.length];
+    final num = _moduloNumber(m.nomeModulo);
+    final nivel = (m.nivelModulo ?? '').trim();
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedScale(
+        scale: _hover ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 180),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: t.primaryBackground,
+            borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(
+              color: _hover
+                  ? t.primary.withValues(alpha: 0.35)
+                  : t.alternate,
+              width: 1.0,
+            ),
+            boxShadow: _hover
+                ? [
+                    BoxShadow(
+                      color: colors[1].withValues(alpha: 0.18),
+                      blurRadius: 20.0,
+                      offset: const Offset(0, 8),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 12.0,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16.0),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16.0),
+              onTap: _open,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 64.0,
+                      height: 64.0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: colors,
+                        ),
+                        borderRadius: BorderRadius.circular(14.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colors[1].withValues(alpha: 0.30),
+                            blurRadius: 10.0,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            right: -8.0,
+                            top: -8.0,
+                            child: Container(
+                              width: 36.0,
+                              height: 36.0,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                                    .withValues(alpha: 0.14),
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              num,
+                              style: GoogleFonts.interTight(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.8,
+                                height: 1.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12.0),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'MÓDULO',
+                            style: GoogleFonts.interTight(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w800,
+                              color: t.secondaryText,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                          const SizedBox(height: 2.0),
+                          Text(
+                            (m.nomeModulo ?? '').trim().isEmpty
+                                ? 'Sem nome'
+                                : m.nomeModulo!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.interTight(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w800,
+                              color: t.primaryText,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Row(
+                            children: [
+                              _NivelBadge(theme: t, nivel: nivel),
+                              const SizedBox(width: 8.0),
+                              AnimatedContainer(
+                                duration:
+                                    const Duration(milliseconds: 160),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 9.0, vertical: 5.0),
+                                decoration: BoxDecoration(
+                                  color: _hover
+                                      ? t.primary
+                                      : t.primary
+                                          .withValues(alpha: 0.10),
+                                  borderRadius:
+                                      BorderRadius.circular(999.0),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Ver',
+                                      style: GoogleFonts.interTight(
+                                        fontSize: 11.0,
+                                        fontWeight: FontWeight.w800,
+                                        color: _hover
+                                            ? Colors.white
+                                            : t.primary,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 3.0),
+                                    Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 13.0,
+                                      color: _hover
+                                          ? Colors.white
+                                          : t.primary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// NivelBadge / Empty state
+// ---------------------------------------------------------------------------
+
+class _NivelBadge extends StatelessWidget {
+  const _NivelBadge({required this.theme, required this.nivel});
+
+  final FlutterFlowTheme theme;
+  final String nivel;
+
+  @override
+  Widget build(BuildContext context) {
+    final isEmpty = nivel.isEmpty;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      decoration: BoxDecoration(
+        color: isEmpty
+            ? theme.alternate.withValues(alpha: 0.5)
+            : const Color(0xFFEFF6FF),
+        borderRadius: BorderRadius.circular(999.0),
+        border: Border.all(
+          color: isEmpty
+              ? theme.alternate
+              : const Color(0xFF1E40AF).withValues(alpha: 0.18),
+          width: 1.0,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.signal_cellular_alt_rounded,
+            size: 12.0,
+            color: isEmpty
+                ? theme.secondaryText
+                : const Color(0xFF1E40AF),
+          ),
+          const SizedBox(width: 4.0),
+          Text(
+            isEmpty ? 'Sem nível' : 'Nível $nivel',
+            style: GoogleFonts.interTight(
+              fontSize: 11.0,
+              fontWeight: FontWeight.w800,
+              color: isEmpty
+                  ? theme.secondaryText
+                  : const Color(0xFF1E40AF),
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.theme});
+
+  final FlutterFlowTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 56.0),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72.0,
+              height: 72.0,
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.10),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Icon(Icons.menu_book_rounded,
+                  color: theme.primary, size: 32.0),
+            ),
+            const SizedBox(height: 20.0),
+            Text(
+              'Nenhum módulo disponível',
+              style: GoogleFonts.interTight(
+                fontSize: 17.0,
+                fontWeight: FontWeight.w800,
+                color: theme.primaryText,
+                letterSpacing: -0.2,
+              ),
+            ),
+            const SizedBox(height: 6.0),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 360.0),
+              child: Text(
+                'Os módulos aparecerão aqui assim que estiverem ativos.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14.0,
+                  color: theme.secondaryText,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
