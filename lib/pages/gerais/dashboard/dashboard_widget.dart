@@ -556,7 +556,7 @@ class _QuickActionsSection extends StatelessWidget {
         icon: Icons.calendar_month_rounded,
         title: 'Calendário',
         subtitle: 'Agenda de aulas',
-        onTap: () => context.pushNamed(CalendarioAulasWidget.routeName),
+        onTap: () => context.pushNamed(CalendarioAulasListaWidget.routeName),
       ),
       _QuickActionSpec(
         icon: Icons.groups_2_rounded,
