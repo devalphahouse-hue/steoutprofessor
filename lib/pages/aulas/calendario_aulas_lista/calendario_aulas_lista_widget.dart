@@ -170,14 +170,56 @@ class _Header extends StatelessWidget {
 // AulasCard wrapper
 // ---------------------------------------------------------------------------
 
-class _AulasCard extends StatelessWidget {
+enum _PeriodoFiltro { todas, hoje, estaSemana, proximaSemana, proximos30 }
+
+class _AulasCard extends StatefulWidget {
   const _AulasCard({required this.theme, required this.isCompact});
 
   final FlutterFlowTheme theme;
   final bool isCompact;
 
   @override
+  State<_AulasCard> createState() => _AulasCardState();
+}
+
+class _AulasCardState extends State<_AulasCard> {
+  _PeriodoFiltro _periodo = _PeriodoFiltro.todas;
+
+  static (DateTime, DateTime)? _intervalo(_PeriodoFiltro p) {
+    final now = DateTime.now();
+    final hoje = DateTime(now.year, now.month, now.day);
+    switch (p) {
+      case _PeriodoFiltro.todas:
+        return null;
+      case _PeriodoFiltro.hoje:
+        return (hoje, hoje.add(const Duration(days: 1)));
+      case _PeriodoFiltro.estaSemana:
+        final inicio = hoje.subtract(Duration(days: hoje.weekday - 1));
+        return (inicio, inicio.add(const Duration(days: 7)));
+      case _PeriodoFiltro.proximaSemana:
+        final inicioEstaSemana =
+            hoje.subtract(Duration(days: hoje.weekday - 1));
+        final inicio = inicioEstaSemana.add(const Duration(days: 7));
+        return (inicio, inicio.add(const Duration(days: 7)));
+      case _PeriodoFiltro.proximos30:
+        return (hoje, hoje.add(const Duration(days: 30)));
+    }
+  }
+
+  List<AulasRow> _filtrar(List<AulasRow> aulas) {
+    final intervalo = _intervalo(_periodo);
+    if (intervalo == null) return aulas;
+    final (inicio, fim) = intervalo;
+    return aulas.where((a) {
+      final d = a.datetimeinicioAula;
+      if (d == null) return false;
+      return !d.isBefore(inicio) && d.isBefore(fim);
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final theme = widget.theme;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -232,6 +274,7 @@ class _AulasCard extends StatelessWidget {
           if (aulas.isEmpty) {
             return _EmptyState(theme: theme);
           }
+          final filtradas = _filtrar(aulas);
 
           return Padding(
             padding: const EdgeInsets.all(20.0),
@@ -239,26 +282,153 @@ class _AulasCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Toolbar(theme: theme, total: aulas.length),
-                const SizedBox(height: 16.0),
-                ListView.separated(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: aulas.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10.0),
-                  itemBuilder: (context, index) {
-                    return _AulaRow(
-                      theme: theme,
-                      aula: aulas[index],
-                      isCompact: isCompact,
-                    );
-                  },
+                _Toolbar(theme: theme, total: filtradas.length),
+                const SizedBox(height: 12.0),
+                _PeriodoChips(
+                  theme: theme,
+                  selected: _periodo,
+                  onChanged: (p) => setState(() => _periodo = p),
                 ),
+                const SizedBox(height: 16.0),
+                if (filtradas.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: Center(
+                      child: Text(
+                        'Nenhuma aula no período selecionado.',
+                        style: theme.bodyMedium.override(
+                          font: GoogleFonts.inter(),
+                          color: theme.secondaryText,
+                          letterSpacing: 0.0,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  ListView.separated(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filtradas.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: 10.0),
+                    itemBuilder: (context, index) {
+                      return _AulaRow(
+                        theme: theme,
+                        aula: filtradas[index],
+                        isCompact: widget.isCompact,
+                      );
+                    },
+                  ),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _PeriodoChips extends StatelessWidget {
+  const _PeriodoChips({
+    required this.theme,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final FlutterFlowTheme theme;
+  final _PeriodoFiltro selected;
+  final ValueChanged<_PeriodoFiltro> onChanged;
+
+  static const _opcoes = <(_PeriodoFiltro, String)>[
+    (_PeriodoFiltro.todas, 'Todas'),
+    (_PeriodoFiltro.hoje, 'Hoje'),
+    (_PeriodoFiltro.estaSemana, 'Esta semana'),
+    (_PeriodoFiltro.proximaSemana, 'Próxima semana'),
+    (_PeriodoFiltro.proximos30, 'Próximos 30 dias'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int i = 0; i < _opcoes.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8.0),
+            _PeriodoChip(
+              theme: theme,
+              label: _opcoes[i].$2,
+              active: selected == _opcoes[i].$1,
+              onTap: () => onChanged(_opcoes[i].$1),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PeriodoChip extends StatefulWidget {
+  const _PeriodoChip({
+    required this.theme,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  final FlutterFlowTheme theme;
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  State<_PeriodoChip> createState() => _PeriodoChipState();
+}
+
+class _PeriodoChipState extends State<_PeriodoChip> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = widget.theme;
+    final active = widget.active;
+    final bg = active
+        ? theme.primary
+        : (_hover
+            ? theme.primary.withValues(alpha: 0.08)
+            : theme.primaryBackground);
+    final fg = active ? Colors.white : theme.primaryText;
+    final borderColor =
+        active ? theme.primary : theme.alternate;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          curve: Curves.easeOut,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(999.0),
+            border: Border.all(color: borderColor, width: 1.0),
+          ),
+          child: Text(
+            widget.label,
+            style: theme.bodyMedium.override(
+              font: GoogleFonts.inter(fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w600,
+              fontSize: 12.5,
+              color: fg,
+              letterSpacing: 0.0,
+            ),
+          ),
+        ),
       ),
     );
   }
