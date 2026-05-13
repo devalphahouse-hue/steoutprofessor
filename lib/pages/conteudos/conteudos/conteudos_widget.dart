@@ -2,7 +2,6 @@ import '/backend/supabase/supabase.dart';
 import '/componentes/sidebar/sidebar_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/custom_functions.dart' as functions;
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +30,61 @@ class ConteudosWidget extends StatefulWidget {
 class _ConteudosWidgetState extends State<ConteudosWidget> {
   late ConteudosModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final Set<String> _selectedIds = {};
+  bool _vinculando = false;
+
+  void _toggleSelect(String? id) {
+    if (id == null || id.isEmpty) return;
+    safeSetState(() {
+      if (_selectedIds.contains(id)) {
+        _selectedIds.remove(id);
+      } else {
+        _selectedIds.add(id);
+      }
+    });
+  }
+
+  Future<void> _vincularSelecionados() async {
+    if (_vinculando ||
+        _selectedIds.isEmpty ||
+        widget.aula == null ||
+        widget.aula!.isEmpty) {
+      return;
+    }
+    setState(() => _vinculando = true);
+    try {
+      _model.aula = await AulasTable().queryRows(
+        queryFn: (q) => q.eqOrNull('id', widget.aula),
+      );
+      final atuais =
+          _model.aula?.firstOrNull?.conteudosVinculados.toList() ??
+              <String>[];
+      final novos =
+          _selectedIds.where((id) => !atuais.contains(id)).toList();
+      if (novos.isNotEmpty) {
+        await AulasTable().update(
+          data: {
+            'conteudos_vinculados': [...atuais, ...novos],
+          },
+          matchingRows: (rows) => rows.eqOrNull('id', widget.aula),
+        );
+      }
+      if (!context.mounted) return;
+      context.pushNamed(
+        DetalhesAulaWidget.routeName,
+        queryParameters: {
+          'idAula': serializeParam(widget.aula, ParamType.String),
+        }.withoutNulls,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _vinculando = false;
+          _selectedIds.clear();
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -57,6 +111,8 @@ class _ConteudosWidgetState extends State<ConteudosWidget> {
     final width = MediaQuery.sizeOf(context).width;
     final isCompact = width < 768;
     final hPad = _hPad(width);
+    final isVincularContexto =
+        widget.aula != null && widget.aula!.isNotEmpty;
 
     return GestureDetector(
       onTap: () {
@@ -78,33 +134,55 @@ class _ConteudosWidgetState extends State<ConteudosWidget> {
                 child: SidebarWidget(route: 'Modulos'),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  primary: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(hPad, 24.0, hPad, 24.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _Header(
-                          theme: theme,
-                          isCompact: isCompact,
-                          categoriaId: widget.categoria,
-                          moduloId: widget.modulo,
-                          onBack: () => Navigator.of(context).maybePop(),
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      primary: false,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          hPad,
+                          24.0,
+                          hPad,
+                          isVincularContexto ? 120.0 : 24.0,
                         ),
-                        const SizedBox(height: 24.0),
-                        _ConteudosList(
-                          theme: theme,
-                          modulo: widget.modulo,
-                          categoria: widget.categoria,
-                          aula: widget.aula,
-                          model: _model,
-                          onAfterVincular: () => safeSetState(() {}),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _Header(
+                              theme: theme,
+                              isCompact: isCompact,
+                              categoriaId: widget.categoria,
+                              moduloId: widget.modulo,
+                              onBack: () => Navigator.of(context).maybePop(),
+                            ),
+                            const SizedBox(height: 24.0),
+                            _ConteudosList(
+                              theme: theme,
+                              modulo: widget.modulo,
+                              categoria: widget.categoria,
+                              isSelectable: isVincularContexto,
+                              selectedIds: _selectedIds,
+                              onToggle: _toggleSelect,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    if (isVincularContexto && _selectedIds.isNotEmpty)
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _BottomSelectionBar(
+                          count: _selectedIds.length,
+                          loading: _vinculando,
+                          onCancelar: () =>
+                              safeSetState(() => _selectedIds.clear()),
+                          onConfirmar: _vincularSelecionados,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],
@@ -322,17 +400,17 @@ class _ConteudosList extends StatelessWidget {
     required this.theme,
     required this.modulo,
     required this.categoria,
-    required this.aula,
-    required this.model,
-    required this.onAfterVincular,
+    required this.isSelectable,
+    required this.selectedIds,
+    required this.onToggle,
   });
 
   final FlutterFlowTheme theme;
   final String? modulo;
   final String? categoria;
-  final String? aula;
-  final ConteudosModel model;
-  final VoidCallback onAfterVincular;
+  final bool isSelectable;
+  final Set<String> selectedIds;
+  final void Function(String?) onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -436,9 +514,9 @@ class _ConteudosList extends StatelessWidget {
                   return _ConteudoRow(
                     theme: theme,
                     conteudo: c,
-                    aula: aula,
-                    model: model,
-                    onAfterVincular: onAfterVincular,
+                    isSelectable: isSelectable,
+                    selected: selectedIds.contains(c.id),
+                    onToggleSelect: () => onToggle(c.id),
                   );
                 },
               ),
@@ -459,16 +537,16 @@ class _ConteudoRow extends StatefulWidget {
   const _ConteudoRow({
     required this.theme,
     required this.conteudo,
-    required this.aula,
-    required this.model,
-    required this.onAfterVincular,
+    required this.isSelectable,
+    required this.selected,
+    required this.onToggleSelect,
   });
 
   final FlutterFlowTheme theme;
   final ConteudosRow conteudo;
-  final String? aula;
-  final ConteudosModel model;
-  final VoidCallback onAfterVincular;
+  final bool isSelectable;
+  final bool selected;
+  final VoidCallback onToggleSelect;
 
   @override
   State<_ConteudoRow> createState() => _ConteudoRowState();
@@ -476,7 +554,6 @@ class _ConteudoRow extends StatefulWidget {
 
 class _ConteudoRowState extends State<_ConteudoRow> {
   bool _hover = false;
-  bool _vinculando = false;
 
   void _abrirVisualizar() {
     final link = widget.conteudo.linkConteudo;
@@ -495,107 +572,113 @@ class _ConteudoRowState extends State<_ConteudoRow> {
     );
   }
 
-  Future<void> _vincularNaAula() async {
-    if (_vinculando) return;
-    setState(() => _vinculando = true);
-    try {
-      widget.model.aula = await AulasTable().queryRows(
-        queryFn: (q) => q.eqOrNull('id', widget.aula),
-      );
-      await AulasTable().update(
-        data: {
-          'conteudos_vinculados': functions.addItemToList(
-            widget.model.aula?.firstOrNull?.conteudosVinculados?.toList(),
-            widget.conteudo.id,
-          ),
-        },
-        matchingRows: (rows) => rows.eqOrNull('id', widget.aula),
-      );
-      if (!mounted) return;
-      context.pushNamed(
-        DetalhesAulaWidget.routeName,
-        queryParameters: {
-          'idAula': serializeParam(widget.aula, ParamType.String),
-        }.withoutNulls,
-      );
-      widget.onAfterVincular();
-    } finally {
-      if (mounted) setState(() => _vinculando = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final t = widget.theme;
     final c = widget.conteudo;
     final nome = (c.nomeConteudo ?? '').trim();
-    final temAula = widget.aula != null && widget.aula!.isNotEmpty;
+    final selected = widget.selected;
+    final selectable = widget.isSelectable;
+
+    final bgColor = selected
+        ? t.primary.withValues(alpha: 0.06)
+        : (_hover
+            ? t.primary.withValues(alpha: 0.04)
+            : Colors.transparent);
 
     return MouseRegion(
-      cursor: SystemMouseCursors.basic,
+      cursor: selectable
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 140),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 14.0, vertical: 12.0),
-        decoration: BoxDecoration(
-          color: _hover
-              ? t.primary.withValues(alpha: 0.04)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 38.0,
-              height: 38.0,
-              decoration: BoxDecoration(
-                color: t.primary.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.play_circle_fill_rounded,
-                color: t.primary,
-                size: 20.0,
-              ),
-            ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: Text(
-                nome.isEmpty ? 'Conteúdo sem nome' : nome,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w600,
-                  color: t.primaryText,
-                  letterSpacing: 0.1,
-                  height: 1.35,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: selectable ? widget.onToggleSelect : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 14.0, vertical: 12.0),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12.0),
+            border: selected
+                ? Border.all(color: t.primary, width: 1.4)
+                : Border.all(color: Colors.transparent, width: 1.4),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (selectable) ...[
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 140),
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: selected ? t.primary : t.secondaryBackground,
+                    borderRadius: BorderRadius.circular(6.0),
+                    border: Border.all(
+                      color: selected ? t.primary : t.alternate,
+                      width: 1.6,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: selected
+                      ? const Icon(Icons.check_rounded,
+                          size: 16, color: Colors.white)
+                      : null,
+                ),
+                const SizedBox(width: 10.0),
+              ],
+              Container(
+                width: 38.0,
+                height: 38.0,
+                decoration: BoxDecoration(
+                  color: t.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.play_circle_fill_rounded,
+                  color: t.primary,
+                  size: 20.0,
                 ),
               ),
-            ),
-            const SizedBox(width: 12.0),
-            _PillButton(
-              theme: t,
-              label: 'Visualizar',
-              icon: Icons.search_rounded,
-              filled: true,
-              onTap: _abrirVisualizar,
-            ),
-            if (temAula) ...[
-              const SizedBox(width: 8.0),
+              const SizedBox(width: 12.0),
+              Expanded(
+                child: Text(
+                  nome.isEmpty ? 'Conteúdo sem nome' : nome,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    color: t.primaryText,
+                    letterSpacing: 0.1,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12.0),
               _PillButton(
                 theme: t,
-                label: _vinculando ? 'Vinculando…' : 'Vincular',
-                icon: Icons.link_rounded,
-                filled: false,
-                onTap: _vinculando ? null : _vincularNaAula,
+                label: 'Visualizar',
+                icon: Icons.search_rounded,
+                filled: true,
+                onTap: _abrirVisualizar,
               ),
+              if (selectable) ...[
+                const SizedBox(width: 8.0),
+                _PillButton(
+                  theme: t,
+                  label: selected ? 'Adicionado' : 'Adicionar',
+                  icon: selected ? Icons.check_rounded : Icons.add_rounded,
+                  filled: selected,
+                  onTap: widget.onToggleSelect,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -759,6 +842,92 @@ class _EmptyState extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomSelectionBar extends StatelessWidget {
+  final int count;
+  final bool loading;
+  final VoidCallback onCancelar;
+  final VoidCallback onConfirmar;
+  const _BottomSelectionBar({
+    required this.count,
+    required this.loading,
+    required this.onCancelar,
+    required this.onConfirmar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.secondaryBackground,
+        border: Border(
+          top: BorderSide(color: theme.alternate, width: 1.0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.10),
+            blurRadius: 22,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_circle_rounded,
+                        size: 16, color: theme.primary),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$count selecionado${count == 1 ? '' : 's'}',
+                      style: GoogleFonts.interTight(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: theme.primary,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              _PillButton(
+                theme: theme,
+                label: 'Limpar',
+                icon: Icons.close_rounded,
+                filled: false,
+                onTap: loading ? null : onCancelar,
+              ),
+              const SizedBox(width: 8),
+              _PillButton(
+                theme: theme,
+                label: loading ? 'Vinculando…' : 'Vincular na aula',
+                icon: loading
+                    ? Icons.hourglass_top_rounded
+                    : Icons.link_rounded,
+                filled: true,
+                onTap: loading ? null : onConfirmar,
+              ),
+            ],
+          ),
         ),
       ),
     );
