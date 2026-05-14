@@ -235,15 +235,19 @@ class _AulasCardState extends State<_AulasCard> {
         ],
       ),
       child: FutureBuilder<List<AulasRow>>(
-        future: AulasTable().queryRows(
-          queryFn: (q) => q
-              .eqOrNull('professor_responsavel', currentUserUid)
-              .gteOrNull(
-                'datetimeinicio_aula',
-                supaSerialize<DateTime>(getCurrentTimestamp),
-              )
-              .order('datetimeinicio_aula', ascending: true),
-        ),
+        future: SupaFlow.client
+            .from('Aulas')
+            .select('*, turmas!inner(deleted_at)')
+            .eq('professor_responsavel', currentUserUid)
+            .gte(
+              'datetimeinicio_aula',
+              supaSerialize<DateTime>(getCurrentTimestamp)!,
+            )
+            .filter('turmas.deleted_at', 'is', null)
+            .order('datetimeinicio_aula', ascending: true)
+            .then((rows) => rows
+                .map((r) => AulasRow(Map<String, dynamic>.from(r)))
+                .toList()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Padding(
