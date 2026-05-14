@@ -71,9 +71,11 @@ class _ConteudosWidgetState extends State<ConteudosWidget> {
       }
       if (!context.mounted) return;
       context.pushNamed(
-        DetalhesAulaWidget.routeName,
+        ModulosWidget.routeName,
         queryParameters: {
-          'idAula': serializeParam(widget.aula, ParamType.String),
+          'aula': serializeParam(widget.aula, ParamType.String),
+          if (novos.isNotEmpty)
+            'vinculadosCount': serializeParam(novos.length, ParamType.int),
         }.withoutNulls,
       );
     } finally {

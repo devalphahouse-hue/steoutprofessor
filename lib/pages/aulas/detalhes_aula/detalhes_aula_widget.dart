@@ -1081,770 +1081,171 @@ class _DetalhesAulaWidgetState extends State<DetalhesAulaWidget> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                            _AulaSectionTitle(
-                                              theme:
-                                                  FlutterFlowTheme.of(context),
-                                              icon: Icons
-                                                  .menu_book_outlined,
-                                              title: 'Planning',
-                                              subtitle:
-                                                  'Conteúdos vinculados, utilizados e anotações.',
+                                          _AulaSectionTitle(
+                                            theme:
+                                                FlutterFlowTheme.of(context),
+                                            icon: Icons.menu_book_outlined,
+                                            title: 'Planning',
+                                            subtitle:
+                                                'Conteúdos vinculados, utilizados e anotações.',
+                                          ),
+                                          _PlanningSection(
+                                            theme:
+                                                FlutterFlowTheme.of(context),
+                                            data: DetalhesAulaStruct
+                                                .maybeFromMap(
+                                                    colContentDetalhesAulaResponse
+                                                        .jsonBody),
+                                            idAula: widget!.idAula,
+                                            textController: _model
+                                                    .textController5 ??=
+                                                TextEditingController(
+                                              text: DetalhesAulaStruct
+                                                      .maybeFromMap(
+                                                          colContentDetalhesAulaResponse
+                                                              .jsonBody)
+                                                  ?.anotacoesComentarios,
                                             ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    decoration: BoxDecoration(),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        if (DetalhesAulaStruct
-                                                                    .maybeFromMap(
-                                                                        colContentDetalhesAulaResponse
-                                                                            .jsonBody)
-                                                                ?.statusAula !=
-                                                            'Finalizada')
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                        0.0,
-                                                                        8.0,
-                                                                        0.0,
-                                                                        8.0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    'Acesse e vincule conteúdos para esta aula',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .labelMedium
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.inter(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).labelMedium.fontStyle,
-                                                                          ),
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .labelMedium
-                                                                              .fontStyle,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                                FFButtonWidget(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    context
-                                                                        .pushNamed(
-                                                                      ModulosWidget
-                                                                          .routeName,
-                                                                      queryParameters:
-                                                                          {
-                                                                        'aula':
-                                                                            serializeParam(
-                                                                          widget!
-                                                                              .idAula,
-                                                                          ParamType
-                                                                              .String,
-                                                                        ),
-                                                                      }.withoutNulls,
-                                                                    );
-                                                                  },
-                                                                  text:
-                                                                      'Vincular conteúdo',
-                                                                  options:
-                                                                      FFButtonOptions(
-                                                                    height:
-                                                                        40.0,
-                                                                    padding: EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            16.0,
-                                                                            0.0,
-                                                                            16.0,
-                                                                            0.0),
-                                                                    iconPadding:
-                                                                        EdgeInsetsDirectional.fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primary,
-                                                                    textStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .override(
-                                                                          font:
-                                                                              GoogleFonts.interTight(
-                                                                            fontWeight:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                            fontStyle:
-                                                                                FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                          ),
-                                                                          color:
-                                                                              Colors.white,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                          fontWeight: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .fontWeight,
-                                                                          fontStyle: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .fontStyle,
-                                                                        ),
-                                                                    elevation:
-                                                                        0.0,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8.0),
-                                                                  ),
-                                                                ),
-                                                              ].divide(SizedBox(
-                                                                  width: 12.0)),
-                                                            ),
-                                                          ),
-                                                        Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          children: [
-                                                            Material(
-                                                              color: Colors
-                                                                  .transparent,
-                                                              elevation: 2.0,
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20.0),
-                                                              ),
-                                                              child: Container(
-                                                                width: 400.0,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryBackground,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20.0),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              15.0),
-                                                                  child: Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .max,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Align(
-                                                                        alignment: AlignmentDirectional(
-                                                                            -1.0,
-                                                                            -1.0),
-                                                                        child:
-                                                                            Text(
-                                                                          'Conteúdos vinculados:',
-                                                                          style: FlutterFlowTheme.of(context)
-                                                                              .titleSmall
-                                                                              .override(
-                                                                                font: GoogleFonts.interTight(
-                                                                                  fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                ),
-                                                                                letterSpacing: 0.0,
-                                                                                fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                              ),
-                                                                        ),
-                                                                      ),
-                                                                      Builder(
-                                                                        builder:
-                                                                            (context) {
-                                                                          final conteudosVinculados =
-                                                                              DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.conteudosVinculados?.toList() ?? [];
-
-                                                                          return Column(
-                                                                            mainAxisSize:
-                                                                                MainAxisSize.max,
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children:
-                                                                                List.generate(conteudosVinculados.length, (conteudosVinculadosIndex) {
-                                                                              final conteudosVinculadosItem = conteudosVinculados[conteudosVinculadosIndex];
-                                                                              return Row(
-                                                                                mainAxisSize: MainAxisSize.max,
-                                                                                children: [
-                                                                                  if (DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.statusAula != 'Finalizada')
-                                                                                    InkWell(
-                                                                                      splashColor: Colors.transparent,
-                                                                                      focusColor: Colors.transparent,
-                                                                                      hoverColor: Colors.transparent,
-                                                                                      highlightColor: Colors.transparent,
-                                                                                      onTap: () async {
-                                                                                        _model.apiRemoverConteudo = await SupabaseGroup.removerConteudoVinculadoCall.call(
-                                                                                          pAulaId: widget!.idAula,
-                                                                                          pConteudoId: conteudosVinculadosItem.uuid,
-                                                                                          token: currentJwtToken,
-                                                                                        );
-
-                                                                                        if ((_model.apiRemoverConteudo?.succeeded ?? false)) {
-                                                                                          safeSetState(() => _model.apiRequestCompleter = null);
-                                                                                          await _model.waitForApiRequestCompleted();
-                                                                                        }
-
-                                                                                        safeSetState(() {});
-                                                                                      },
-                                                                                      child: FaIcon(
-                                                                                        FontAwesomeIcons.trashAlt,
-                                                                                        color: FlutterFlowTheme.of(context).primaryText,
-                                                                                        size: 16.0,
-                                                                                      ),
-                                                                                    ),
-                                                                                  Expanded(
-                                                                                    child: Text(
-                                                                                      conteudosVinculadosItem.nomeConteudo,
-                                                                                      style: FlutterFlowTheme.of(context).labelMedium.override(
-                                                                                            font: GoogleFonts.inter(
-                                                                                              fontWeight: FontWeight.w600,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
-                                                                                            ),
-                                                                                            fontSize: 12.0,
-                                                                                            letterSpacing: 0.0,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
-                                                                                          ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ].divide(SizedBox(width: 8.0)),
-                                                                              );
-                                                                            }).divide(SizedBox(height: 4.0)),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ].divide(SizedBox(
-                                                                        height:
-                                                                            10.0)),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            if (DetalhesAulaStruct.maybeFromMap(
-                                                                        colContentDetalhesAulaResponse
-                                                                            .jsonBody)
-                                                                    ?.statusAula ==
-                                                                'Finalizada')
-                                                              Material(
-                                                                color: Colors
-                                                                    .transparent,
-                                                                elevation: 2.0,
-                                                                shape:
-                                                                    RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20.0),
-                                                                ),
-                                                                child:
-                                                                    Container(
-                                                                  width: 400.0,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .primaryBackground,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            20.0),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            15.0),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children:
-                                                                          [
-                                                                        Align(
-                                                                          alignment: AlignmentDirectional(
-                                                                              -1.0,
-                                                                              -1.0),
-                                                                          child:
-                                                                              Text(
-                                                                            'Conteúdos utilizados',
-                                                                            style: FlutterFlowTheme.of(context).titleSmall.override(
-                                                                                  font: GoogleFonts.interTight(
-                                                                                    fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                    fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                  ),
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FlutterFlowTheme.of(context).titleSmall.fontWeight,
-                                                                                  fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
-                                                                                ),
-                                                                          ),
-                                                                        ),
-                                                                        Builder(
-                                                                          builder:
-                                                                              (context) {
-                                                                            final conteudosUtilizados =
-                                                                                DetalhesAulaStruct.maybeFromMap(colContentDetalhesAulaResponse.jsonBody)?.conteudosUtilizados?.toList() ?? [];
-
-                                                                            return Column(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: List.generate(conteudosUtilizados.length, (conteudosUtilizadosIndex) {
-                                                                                final conteudosUtilizadosItem = conteudosUtilizados[conteudosUtilizadosIndex];
-                                                                                return Row(
-                                                                                  mainAxisSize: MainAxisSize.max,
-                                                                                  children: [
-                                                                                    Expanded(
-                                                                                      child: Text(
-                                                                                        conteudosUtilizadosItem.nomeConteudo,
-                                                                                        style: FlutterFlowTheme.of(context).labelMedium.override(
-                                                                                              font: GoogleFonts.inter(
-                                                                                                fontWeight: FontWeight.w600,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
-                                                                                              ),
-                                                                                              fontSize: 12.0,
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FontWeight.w600,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
-                                                                                            ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                );
-                                                                              }).divide(SizedBox(height: 4.0)),
-                                                                            );
-                                                                          },
-                                                                        ),
-                                                                      ].divide(SizedBox(
-                                                                              height: 10.0)),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                          ].divide(SizedBox(
-                                                              width: 12.0)),
-                                                        ),
-                                                      ].divide(SizedBox(
-                                                          height: 10.0)),
+                                            textFocusNode: _model
+                                                    .textFieldFocusNode5 ??=
+                                                FocusNode(),
+                                            finalizada: DetalhesAulaStruct
+                                                        .maybeFromMap(
+                                                            colContentDetalhesAulaResponse
+                                                                .jsonBody)
+                                                    ?.statusAula ==
+                                                'Finalizada',
+                                            aguardandoPlanning:
+                                                DetalhesAulaStruct
+                                                            .maybeFromMap(
+                                                                colContentDetalhesAulaResponse
+                                                                    .jsonBody)
+                                                        ?.statusAula ==
+                                                    'Aguardando Planning',
+                                            onRemoverConteudo:
+                                                (conteudoId) async {
+                                              _model.apiRemoverConteudo =
+                                                  await SupabaseGroup
+                                                      .removerConteudoVinculadoCall
+                                                      .call(
+                                                pAulaId: widget!.idAula,
+                                                pConteudoId: conteudoId,
+                                                token: currentJwtToken,
+                                              );
+                                              if ((_model
+                                                      .apiRemoverConteudo
+                                                      ?.succeeded ??
+                                                  false)) {
+                                                safeSetState(() => _model
+                                                    .apiRequestCompleter = null);
+                                                await _model
+                                                    .waitForApiRequestCompleted();
+                                              }
+                                              safeSetState(() {});
+                                            },
+                                            onConcluirPlanning: () async {
+                                              await AulasTable().update(
+                                                data: {
+                                                  'status_aula':
+                                                      'Planning Concluído',
+                                                },
+                                                matchingRows: (rows) => rows
+                                                    .eqOrNull(
+                                                        'id', widget!.idAula),
+                                              );
+                                              _model.apiResulthcv =
+                                                  await SupabaseGroup
+                                                      .criarAulaNoPlanningCall
+                                                      .call(
+                                                pTurmaId: DetalhesAulaStruct
+                                                        .maybeFromMap(
+                                                            colContentDetalhesAulaResponse
+                                                                .jsonBody)
+                                                    ?.turma,
+                                                data: DetalhesAulaStruct
+                                                        .maybeFromMap(
+                                                            colContentDetalhesAulaResponse
+                                                                .jsonBody)
+                                                    ?.datetimeinicioAula,
+                                                token: currentJwtToken,
+                                              );
+                                              if ((_model.apiResulthcv
+                                                      ?.succeeded ??
+                                                  true)) {
+                                                _model.alunosTurma =
+                                                    await MetaAlunosTable()
+                                                        .queryRows(
+                                                  queryFn: (q) => q.eqOrNull(
+                                                    'turma',
+                                                    DetalhesAulaStruct
+                                                            .maybeFromMap(
+                                                                colContentDetalhesAulaResponse
+                                                                    .jsonBody)
+                                                        ?.turma,
+                                                  ),
+                                                );
+                                                await AulasTable().update(
+                                                  data: {
+                                                    'alunos_convidados':
+                                                        _model.alunosTurma
+                                                            ?.map((e) =>
+                                                                e.userId)
+                                                            .withoutNulls
+                                                            .toList(),
+                                                  },
+                                                  matchingRows: (rows) =>
+                                                      rows.eqOrNull(
+                                                    'id',
+                                                    SupabaseGroup
+                                                        .criarAulaNoPlanningCall
+                                                        .idaula(
+                                                      _model.apiResulthcv
+                                                              ?.jsonBody ??
+                                                          '',
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              width: MediaQuery.sizeOf(context)
-                                                      .width *
-                                                  1.0,
-                                              child: TextFormField(
-                                                controller:
-                                                    _model.textController5 ??=
-                                                        TextEditingController(
-                                                  text: DetalhesAulaStruct
-                                                          .maybeFromMap(
-                                                              colContentDetalhesAulaResponse
-                                                                  .jsonBody)
-                                                      ?.anotacoesComentarios,
-                                                ),
-                                                focusNode:
-                                                    _model.textFieldFocusNode5,
-                                                onChanged: (_) =>
-                                                    EasyDebounce.debounce(
-                                                  '_model.textController5',
-                                                  Duration(milliseconds: 2000),
-                                                  () async {
-                                                    await AulasTable().update(
-                                                      data: {
-                                                        'anotacoes_comentarios':
-                                                            _model
-                                                                .textController5
-                                                                .text,
-                                                      },
-                                                      matchingRows: (rows) =>
-                                                          rows.eqOrNull(
-                                                        'id',
+                                                );
+                                                if (!context.mounted) return;
+                                                context.pushNamed(
+                                                  DetalhesAulaWidget
+                                                      .routeName,
+                                                  queryParameters: {
+                                                    'idAula': serializeParam(
                                                         widget!.idAula,
-                                                      ),
+                                                        ParamType.String),
+                                                  }.withoutNulls,
+                                                );
+                                              } else {
+                                                if (!context.mounted) return;
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: Text((_model
+                                                                  .apiResulthcv
+                                                                  ?.jsonBody ??
+                                                              '')
+                                                          .toString()),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: Text('Ok'),
+                                                        ),
+                                                      ],
                                                     );
                                                   },
-                                                ),
-                                                autofocus: false,
-                                                obscureText: false,
-                                                decoration: InputDecoration(
-                                                  isDense: true,
-                                                  labelText:
-                                                      'Anotações e Comentários',
-                                                  labelStyle: FlutterFlowTheme
-                                                          .of(context)
-                                                      .labelMedium
-                                                      .override(
-                                                        font: GoogleFonts.inter(
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontStyle,
-                                                        ),
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .fontStyle,
-                                                      ),
-                                                  hintText: 'Módulo',
-                                                  hintStyle: FlutterFlowTheme
-                                                          .of(context)
-                                                      .labelMedium
-                                                      .override(
-                                                        font: GoogleFonts.inter(
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .labelMedium
-                                                                  .fontStyle,
-                                                        ),
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .fontWeight,
-                                                        fontStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMedium
-                                                                .fontStyle,
-                                                      ),
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .alternate,
-                                                      width: 1.0,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color: Color(0x00000000),
-                                                      width: 1.0,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                  errorBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .error,
-                                                      width: 1.0,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                  focusedErrorBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .error,
-                                                      width: 1.0,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                  filled: true,
-                                                  fillColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryBackground,
-                                                ),
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          font:
-                                                              GoogleFonts.inter(
-                                                            fontWeight:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontWeight,
-                                                            fontStyle:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .fontStyle,
-                                                          ),
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontWeight,
-                                                          fontStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMedium
-                                                                  .fontStyle,
-                                                        ),
-                                                maxLines: null,
-                                                minLines: 5,
-                                                cursorColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                validator: _model
-                                                    .textController5Validator
-                                                    .asValidator(context),
-                                              ),
-                                            ),
-                                            if (DetalhesAulaStruct.maybeFromMap(
-                                                        colContentDetalhesAulaResponse
-                                                            .jsonBody)
-                                                    ?.statusAula !=
-                                                'Finalizada')
-                                              Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  if (DetalhesAulaStruct
-                                                              .maybeFromMap(
-                                                                  colContentDetalhesAulaResponse
-                                                                      .jsonBody)
-                                                          ?.statusAula ==
-                                                      'Aguardando Planning')
-                                                    FFButtonWidget(
-                                                      onPressed: () async {
-                                                        await AulasTable()
-                                                            .update(
-                                                          data: {
-                                                            'status_aula':
-                                                                'Planning Concluído',
-                                                          },
-                                                          matchingRows:
-                                                              (rows) =>
-                                                                  rows.eqOrNull(
-                                                            'id',
-                                                            widget!.idAula,
-                                                          ),
-                                                        );
-                                                        _model.apiResulthcv =
-                                                            await SupabaseGroup
-                                                                .criarAulaNoPlanningCall
-                                                                .call(
-                                                          pTurmaId: DetalhesAulaStruct
-                                                                  .maybeFromMap(
-                                                                      colContentDetalhesAulaResponse
-                                                                          .jsonBody)
-                                                              ?.turma,
-                                                          data: DetalhesAulaStruct
-                                                                  .maybeFromMap(
-                                                                      colContentDetalhesAulaResponse
-                                                                          .jsonBody)
-                                                              ?.datetimeinicioAula,
-                                                          token:
-                                                              currentJwtToken,
-                                                        );
-
-                                                        if ((_model.apiResulthcv
-                                                                ?.succeeded ??
-                                                            true)) {
-                                                          _model.alunosTurma =
-                                                              await MetaAlunosTable()
-                                                                  .queryRows(
-                                                            queryFn: (q) =>
-                                                                q.eqOrNull(
-                                                              'turma',
-                                                              DetalhesAulaStruct
-                                                                      .maybeFromMap(
-                                                                          colContentDetalhesAulaResponse
-                                                                              .jsonBody)
-                                                                  ?.turma,
-                                                            ),
-                                                          );
-                                                          await AulasTable()
-                                                              .update(
-                                                            data: {
-                                                              'alunos_convidados': _model
-                                                                  .alunosTurma
-                                                                  ?.map((e) =>
-                                                                      e.userId)
-                                                                  .withoutNulls
-                                                                  .toList(),
-                                                            },
-                                                            matchingRows:
-                                                                (rows) => rows
-                                                                    .eqOrNull(
-                                                              'id',
-                                                              SupabaseGroup
-                                                                  .criarAulaNoPlanningCall
-                                                                  .idaula(
-                                                                (_model.apiResulthcv
-                                                                        ?.jsonBody ??
-                                                                    ''),
-                                                              ),
-                                                            ),
-                                                          );
-
-                                                          context.pushNamed(
-                                                            DetalhesAulaWidget
-                                                                .routeName,
-                                                            queryParameters: {
-                                                              'idAula':
-                                                                  serializeParam(
-                                                                widget!.idAula,
-                                                                ParamType
-                                                                    .String,
-                                                              ),
-                                                            }.withoutNulls,
-                                                          );
-                                                        } else {
-                                                          await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (alertDialogContext) {
-                                                              return AlertDialog(
-                                                                title: Text((_model
-                                                                            .apiResulthcv
-                                                                            ?.jsonBody ??
-                                                                        '')
-                                                                    .toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.pop(
-                                                                            alertDialogContext),
-                                                                    child: Text(
-                                                                        'Ok'),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-
-                                                        safeSetState(() {});
-                                                      },
-                                                      text: 'Concluir Planning',
-                                                      options: FFButtonOptions(
-                                                        height: 40.0,
-                                                        padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
-                                                        iconPadding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primary,
-                                                        textStyle:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .titleSmall
-                                                                .override(
-                                                                  font: GoogleFonts
-                                                                      .interTight(
-                                                                    fontWeight: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontWeight,
-                                                                    fontStyle: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .titleSmall
-                                                                        .fontStyle,
-                                                                  ),
-                                                                  color: Colors
-                                                                      .white,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontWeight,
-                                                                  fontStyle: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .titleSmall
-                                                                      .fontStyle,
-                                                                ),
-                                                        elevation: 0.0,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                      ),
-                                                    ),
-                                                ].divide(SizedBox(width: 12.0)),
-                                              ),
-                                          ].divide(SizedBox(height: 20.0)),
-                                        ),
+                                                );
+                                              }
+                                              safeSetState(() {});
+                                            },
+                                          ),
+                                        ].divide(SizedBox(height: 20.0)),
                                       ),
                                     ),
+                                  ),
                                 ].divide(SizedBox(height: 16.0)),
                               ),
                           ),
@@ -2382,3 +1783,599 @@ class _AulaInfoBanner extends StatelessWidget {
     );
   }
 }
+
+// ===========================================================================
+// Planning — helpers visuais portados do stepout-franqueado
+// ===========================================================================
+
+class _PlanningSection extends StatelessWidget {
+  const _PlanningSection({
+    required this.theme,
+    required this.data,
+    required this.idAula,
+    required this.textController,
+    required this.textFocusNode,
+    required this.finalizada,
+    required this.aguardandoPlanning,
+    required this.onRemoverConteudo,
+    required this.onConcluirPlanning,
+  });
+
+  final FlutterFlowTheme theme;
+  final DetalhesAulaStruct? data;
+  final String? idAula;
+  final TextEditingController? textController;
+  final FocusNode? textFocusNode;
+  final bool finalizada;
+  final bool aguardandoPlanning;
+  final Future<void> Function(String? conteudoId) onRemoverConteudo;
+  final VoidCallback onConcluirPlanning;
+
+  @override
+  Widget build(BuildContext context) {
+    final vinculados =
+        data?.conteudosVinculados ?? const <ConteudosAulaStruct>[];
+    final utilizados =
+        data?.conteudosUtilizados ?? const <ConteudosAulaStruct>[];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _ConteudosVinculadosBlock(
+          theme: theme,
+          conteudos: vinculados,
+          finalizada: finalizada,
+          onAdd: () => context.pushNamed(
+            ModulosWidget.routeName,
+            queryParameters: {
+              'aula': serializeParam(idAula, ParamType.String),
+            }.withoutNulls,
+          ),
+          onRemover: onRemoverConteudo,
+        ),
+        if (finalizada) ...[
+          const SizedBox(height: 14.0),
+          _ConteudosUtilizadosBlock(theme: theme, conteudos: utilizados),
+        ],
+        const SizedBox(height: 16.0),
+        _LabeledField(
+          theme: theme,
+          label: 'Anotações e comentários',
+          child: TextFormField(
+            controller: textController,
+            focusNode: textFocusNode,
+            readOnly: finalizada,
+            onChanged: finalizada
+                ? null
+                : (_) => EasyDebounce.debounce(
+                      '_model.textController5',
+                      const Duration(milliseconds: 2000),
+                      () async {
+                        await AulasTable().update(
+                          data: {
+                            'anotacoes_comentarios':
+                                textController?.text ?? '',
+                          },
+                          matchingRows: (rows) => rows.eqOrNull('id', idAula),
+                        );
+                      },
+                    ),
+            maxLines: null,
+            minLines: 5,
+            style: _fieldTextStyle(theme),
+            cursorColor: theme.primary,
+            decoration: _fieldDecoration(
+              theme,
+              hint:
+                  'Anote pontos importantes desta aula, observações sobre alunos, planejamento...',
+              readOnly: finalizada,
+            ),
+          ),
+        ),
+        if (aguardandoPlanning) ...[
+          const SizedBox(height: 18.0),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: _PrimaryActionButton(
+              theme: theme,
+              icon: Icons.task_alt_rounded,
+              label: 'Concluir planning',
+              onTap: onConcluirPlanning,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ConteudosVinculadosBlock extends StatelessWidget {
+  const _ConteudosVinculadosBlock({
+    required this.theme,
+    required this.conteudos,
+    required this.finalizada,
+    required this.onAdd,
+    required this.onRemover,
+  });
+
+  final FlutterFlowTheme theme;
+  final List<ConteudosAulaStruct> conteudos;
+  final bool finalizada;
+  final VoidCallback onAdd;
+  final Future<void> Function(String? conteudoId) onRemover;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14.0),
+      decoration: BoxDecoration(
+        color: theme.secondaryBackground.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14.0),
+        border: Border.all(color: theme.alternate, width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32.0,
+                height: 32.0,
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.bookmark_added_rounded,
+                    color: theme.primary, size: 16.0),
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Conteúdos vinculados',
+                      style: theme.titleSmall.override(
+                        font: GoogleFonts.interTight(
+                            fontWeight: FontWeight.w700),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.5,
+                        color: theme.primaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 2.0),
+                    Text(
+                      finalizada
+                          ? 'Conteúdos definidos para esta aula.'
+                          : 'Acesse e vincule conteúdos para esta aula.',
+                      style: theme.bodySmall.override(
+                        font:
+                            GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.0,
+                        color: theme.secondaryText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (!finalizada)
+                _PrimaryActionButton(
+                  theme: theme,
+                  icon: Icons.add_rounded,
+                  label: 'Vincular conteúdo',
+                  onTap: onAdd,
+                ),
+            ],
+          ),
+          const SizedBox(height: 12.0),
+          if (conteudos.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 14.0, horizontal: 12.0),
+              decoration: BoxDecoration(
+                color: theme.primaryBackground.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(color: theme.alternate, width: 1.0),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.bookmarks_outlined,
+                      color: theme.secondaryText, size: 16.0),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      'Nenhum conteúdo vinculado ainda.',
+                      style: theme.bodyMedium.override(
+                        font:
+                            GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.0,
+                        color: theme.secondaryText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              children: conteudos.map((c) {
+                return _ConteudoChip(
+                  theme: theme,
+                  nome: c.nomeConteudo,
+                  removable: !finalizada,
+                  onRemove: () => onRemover(c.uuid),
+                );
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConteudosUtilizadosBlock extends StatelessWidget {
+  const _ConteudosUtilizadosBlock({
+    required this.theme,
+    required this.conteudos,
+  });
+
+  final FlutterFlowTheme theme;
+  final List<ConteudosAulaStruct> conteudos;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14.0),
+      decoration: BoxDecoration(
+        color: theme.success.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(14.0),
+        border: Border.all(
+            color: theme.success.withValues(alpha: 0.4), width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32.0,
+                height: 32.0,
+                decoration: BoxDecoration(
+                  color: theme.success.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.task_alt_rounded,
+                    color: theme.success, size: 16.0),
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Conteúdos utilizados',
+                      style: theme.titleSmall.override(
+                        font: GoogleFonts.interTight(
+                            fontWeight: FontWeight.w700),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.5,
+                        color: theme.primaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 2.0),
+                    Text(
+                      'Conteúdos efetivamente trabalhados durante a aula.',
+                      style: theme.bodySmall.override(
+                        font:
+                            GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.0,
+                        color: theme.secondaryText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12.0),
+          if (conteudos.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 14.0, horizontal: 12.0),
+              decoration: BoxDecoration(
+                color: theme.primaryBackground.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(color: theme.alternate, width: 1.0),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.assignment_late_outlined,
+                      color: theme.secondaryText, size: 16.0),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      'Nenhum conteúdo registrado.',
+                      style: theme.bodyMedium.override(
+                        font:
+                            GoogleFonts.inter(fontWeight: FontWeight.w500),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.0,
+                        color: theme.secondaryText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              children: conteudos.map((c) {
+                return _ConteudoChip(
+                  theme: theme,
+                  nome: c.nomeConteudo,
+                  removable: false,
+                  accent: theme.success,
+                  onRemove: () {},
+                );
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConteudoChip extends StatefulWidget {
+  const _ConteudoChip({
+    required this.theme,
+    required this.nome,
+    required this.removable,
+    required this.onRemove,
+    this.accent,
+  });
+
+  final FlutterFlowTheme theme;
+  final String nome;
+  final bool removable;
+  final VoidCallback onRemove;
+  final Color? accent;
+
+  @override
+  State<_ConteudoChip> createState() => _ConteudoChipState();
+}
+
+class _ConteudoChipState extends State<_ConteudoChip> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = widget.theme;
+    final accent = widget.accent ?? theme.primary;
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.fromLTRB(
+            12.0, 8.0, widget.removable ? 8.0 : 12.0, 8.0),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: _hovered ? 0.14 : 0.10),
+          borderRadius: BorderRadius.circular(999.0),
+          border: Border.all(
+            color: accent.withValues(alpha: _hovered ? 0.5 : 0.25),
+            width: 1.0,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.menu_book_rounded, color: accent, size: 14.0),
+            const SizedBox(width: 8.0),
+            Text(
+              widget.nome.isEmpty ? '—' : widget.nome,
+              style: theme.bodyMedium.override(
+                font: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                fontWeight: FontWeight.w600,
+                fontSize: 13.0,
+                color: accent,
+              ),
+            ),
+            if (widget.removable) ...[
+              const SizedBox(width: 6.0),
+              GestureDetector(
+                onTap: widget.onRemove,
+                child: Container(
+                  width: 22.0,
+                  height: 22.0,
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.18),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(Icons.close_rounded,
+                      color: accent, size: 13.0),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PrimaryActionButton extends StatefulWidget {
+  const _PrimaryActionButton({
+    required this.theme,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final FlutterFlowTheme theme;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  State<_PrimaryActionButton> createState() => _PrimaryActionButtonState();
+}
+
+class _PrimaryActionButtonState extends State<_PrimaryActionButton> {
+  bool _hovered = false;
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = widget.theme;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() {
+        _hovered = false;
+        _pressed = false;
+      }),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 120),
+          scale: _pressed ? 0.98 : 1.0,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            curve: Curves.easeOut,
+            height: 44.0,
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16.0, vertical: 10.0),
+            decoration: BoxDecoration(
+              color: theme.primary,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.primary
+                      .withValues(alpha: _hovered ? 0.30 : 0.18),
+                  blurRadius: _hovered ? 18.0 : 12.0,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(widget.icon, color: Colors.white, size: 18.0),
+                const SizedBox(width: 8.0),
+                Text(
+                  widget.label,
+                  style: theme.titleSmall.override(
+                    font: GoogleFonts.interTight(fontWeight: FontWeight.w700),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.5,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LabeledField extends StatelessWidget {
+  const _LabeledField({
+    required this.theme,
+    required this.label,
+    required this.child,
+  });
+
+  final FlutterFlowTheme theme;
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          style: theme.labelSmall.override(
+            font: GoogleFonts.inter(fontWeight: FontWeight.w600),
+            fontWeight: FontWeight.w600,
+            fontSize: 12.0,
+            letterSpacing: 0.4,
+            color: theme.secondaryText,
+          ),
+        ),
+        const SizedBox(height: 6.0),
+        child,
+      ],
+    );
+  }
+}
+
+InputDecoration _fieldDecoration(FlutterFlowTheme theme,
+    {String? hint, IconData? prefix, bool readOnly = false}) {
+  return InputDecoration(
+    isDense: true,
+    hintText: hint,
+    hintStyle: theme.labelMedium.override(
+      font: GoogleFonts.inter(fontWeight: FontWeight.w400),
+      fontWeight: FontWeight.w400,
+      fontSize: 13.5,
+      color: theme.secondaryText,
+    ),
+    prefixIcon: prefix == null
+        ? null
+        : Icon(prefix, color: theme.secondaryText, size: 18.0),
+    contentPadding:
+        const EdgeInsets.symmetric(horizontal: 14.0, vertical: 14.0),
+    filled: true,
+    fillColor: readOnly
+        ? theme.secondaryBackground.withValues(alpha: 0.6)
+        : theme.secondaryBackground,
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: BorderSide(color: theme.alternate, width: 1.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: BorderSide(
+        color: readOnly ? theme.alternate : theme.primary,
+        width: readOnly ? 1.0 : 1.4,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: BorderSide(color: theme.error, width: 1.0),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: BorderSide(color: theme.error, width: 1.4),
+    ),
+  );
+}
+
+TextStyle _fieldTextStyle(FlutterFlowTheme theme) =>
+    theme.bodyMedium.override(
+      font: GoogleFonts.inter(fontWeight: FontWeight.w500),
+      fontWeight: FontWeight.w500,
+      fontSize: 14.0,
+      color: theme.primaryText,
+    );

@@ -12,9 +12,11 @@ class ModulosWidget extends StatefulWidget {
   const ModulosWidget({
     super.key,
     this.aula,
+    this.vinculadosCount,
   });
 
   final String? aula;
+  final int? vinculadosCount;
 
   static String routeName = 'Modulos';
   static String routePath = '/modulos';
@@ -26,12 +28,65 @@ class ModulosWidget extends StatefulWidget {
 class _ModulosWidgetState extends State<ModulosWidget> {
   late ModulosModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  int? _totalVinculadosAula;
+
+  Future<void> _carregarTotalVinculados() async {
+    if (widget.aula == null || widget.aula!.isEmpty) return;
+    try {
+      final rows = await AulasTable().queryRows(
+        queryFn: (q) => q.eqOrNull('id', widget.aula),
+      );
+      final total = rows.firstOrNull?.conteudosVinculados.length ?? 0;
+      if (!mounted) return;
+      safeSetState(() => _totalVinculadosAula = total);
+    } catch (_) {
+      // Sem total atualizado: chip volta ao estado amarelo padrão.
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ModulosModel());
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    _carregarTotalVinculados();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      safeSetState(() {});
+      final count = widget.vinculadosCount ?? 0;
+      if (count > 0) {
+        final theme = FlutterFlowTheme.of(context);
+        final msg = count == 1
+            ? '1 conteúdo vinculado à aula com sucesso'
+            : '$count conteúdos vinculados à aula com sucesso';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle_rounded,
+                    color: Colors.white, size: 20),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    msg,
+                    style: GoogleFonts.inter(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: theme.primary,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -89,7 +144,23 @@ class _ModulosWidgetState extends State<ModulosWidget> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _Header(theme: theme, isCompact: isCompact),
+                        _Header(
+                          theme: theme,
+                          isCompact: isCompact,
+                          isVincularContexto:
+                              widget.aula != null && widget.aula!.isNotEmpty,
+                          vinculadosCount: _totalVinculadosAula,
+                          onVoltarAula: (widget.aula != null &&
+                                  widget.aula!.isNotEmpty)
+                              ? () => context.pushNamed(
+                                    DetalhesAulaWidget.routeName,
+                                    queryParameters: {
+                                      'idAula': serializeParam(
+                                          widget.aula, ParamType.String),
+                                    }.withoutNulls,
+                                  )
+                              : null,
+                        ),
                         const SizedBox(height: 24.0),
                         _ModulosGrid(
                           theme: theme,
@@ -114,10 +185,19 @@ class _ModulosWidgetState extends State<ModulosWidget> {
 // ---------------------------------------------------------------------------
 
 class _Header extends StatelessWidget {
-  const _Header({required this.theme, required this.isCompact});
+  const _Header({
+    required this.theme,
+    required this.isCompact,
+    this.isVincularContexto = false,
+    this.vinculadosCount,
+    this.onVoltarAula,
+  });
 
   final FlutterFlowTheme theme;
   final bool isCompact;
+  final bool isVincularContexto;
+  final int? vinculadosCount;
+  final VoidCallback? onVoltarAula;
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +253,88 @@ class _Header extends StatelessWidget {
             letterSpacing: 0.0,
           ),
         ),
+        if (isVincularContexto) ...[
+          const SizedBox(height: 12.0),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12.0,
+            runSpacing: 8.0,
+            children: [
+              Builder(builder: (_) {
+                final count = vinculadosCount ?? 0;
+                final isSucesso = count > 0;
+                final cor = isSucesso ? theme.primary : theme.warning;
+                final icone = isSucesso
+                    ? Icons.check_circle_rounded
+                    : Icons.link_rounded;
+                final texto = isSucesso
+                    ? (count == 1
+                        ? '1 conteúdo vinculado à aula'
+                        : '$count conteúdos vinculados à aula')
+                    : 'Selecione um conteúdo para vincular à aula';
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 6.0),
+                  decoration: BoxDecoration(
+                    color: cor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(999.0),
+                    border:
+                        Border.all(color: cor.withValues(alpha: 0.35)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icone, size: 14.0, color: cor),
+                      const SizedBox(width: 6.0),
+                      Text(
+                        texto,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w600,
+                          color: cor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              if (onVoltarAula != null)
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onVoltarAula,
+                    borderRadius: BorderRadius.circular(999.0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0, vertical: 6.0),
+                      decoration: BoxDecoration(
+                        color: theme.primary.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(999.0),
+                        border: Border.all(
+                            color: theme.primary.withValues(alpha: 0.35)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.arrow_back_rounded,
+                              size: 14.0, color: theme.primary),
+                          const SizedBox(width: 6.0),
+                          Text(
+                            'Voltar à aula',
+                            style: GoogleFonts.inter(
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w600,
+                              color: theme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ],
     );
   }
