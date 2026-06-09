@@ -243,7 +243,6 @@ class _AulasCardState extends State<_AulasCard> {
               'datetimeinicio_aula',
               supaSerialize<DateTime>(getCurrentTimestamp)!,
             )
-            .filter('turmas.deleted_at', 'is', null)
             .order('datetimeinicio_aula', ascending: true)
             .then((rows) => rows
                 .map((r) => AulasRow(Map<String, dynamic>.from(r)))
